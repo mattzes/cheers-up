@@ -1,30 +1,31 @@
-import type { Metadata, Viewport } from 'next';
+'use client';
+
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { signInAnonymously } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { useEffect } from 'react';
 const inter = Inter({ subsets: ['latin'] });
 
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  themeColor: '#006bd1',
-};
-
-export const metadata: Metadata = {
-  title: 'Prosit Up',
-  description: 'Jederzeit einen neuen Trinkspruch',
-  manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'Prosit Up',
-  },
-  formatDetection: {
-    telephone: false,
-  },
-};
+signInAnonymously(auth)
+  .then(() => {
+    console.log('Signed in anonymously');
+  })
+  .catch(error => {
+    console.error('Anonymous sign-in error:', error);
+  });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    signInAnonymously(auth)
+      .then(() => {
+        console.log('Signed in anonymously');
+      })
+      .catch(error => {
+        console.error('Anonymous sign-in error:', error);
+      });
+  }, []);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
