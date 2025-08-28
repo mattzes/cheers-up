@@ -95,7 +95,7 @@ export default function ToastApp() {
           <div className="flex items-center justify-between">
             <div className="w-10" /> {/* Spacer for centering */}
             <div>
-              <h1 className="text-3xl font-bold text-foreground">😄 Toast App</h1>
+              <h1 className="text-3xl font-bold text-foreground">Cheers Up 🍻</h1>
               <p className="text-muted-foreground">
                 Toast {currentToastIndex + 1} of {toasts.length}
               </p>
@@ -108,7 +108,7 @@ export default function ToastApp() {
         </div>
 
         {/* Toast Card */}
-        <Card className="shadow-lg">
+        <Card className="shadow-lg min-h-48 flex items-center justify-center">
           <CardContent className="p-6">
             <p className="text-lg leading-relaxed text-center text-balance">{currentToast}</p>
           </CardContent>
@@ -133,7 +133,7 @@ export default function ToastApp() {
           </div>
 
           {/* Next Toast Button */}
-          <Button onClick={handleNextToast} size="lg" className="w-full gap-2" variant="secondary">
+          <Button onClick={handleNextToast} size="lg" className="w-full h-16 gap-2" variant="secondary">
             <RotateCcw className="w-5 h-5" />
             Next Toast
           </Button>
