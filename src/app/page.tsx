@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { ThumbsUp, ThumbsDown, RotateCcw, Sun, Moon, Plus, AlertCircle } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, RotateCcw, Sun, Moon, Plus, X, AlertCircle } from 'lucide-react';
 import { useToasts } from '@/hooks/useToasts';
 
 export default function ToastApp() {
@@ -89,7 +89,7 @@ export default function ToastApp() {
               onClick={() => setShowAddToast(!showAddToast)}
               className="w-10 h-10"
               aria-label={showAddToast ? 'Cancel adding toast' : 'Add new toast'}>
-              <Plus className="w-5 h-5" />
+              {showAddToast ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
             </Button>
             <div>
               <h1 className="text-3xl font-bold text-foreground">Cheers Up 🍻</h1>
