@@ -91,7 +91,15 @@ export default function ToastApp() {
         {/* Header */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-between">
-            <div className="w-10" /> {/* Spacer for centering */}
+            {/* Add toast button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowAddToast(!showAddToast)}
+              className="w-10 h-10"
+              aria-label={showAddToast ? 'Cancel adding toast' : 'Add new toast'}>
+              <Plus className="w-5 h-5" />
+            </Button>
             <div>
               <h1 className="text-3xl font-bold text-foreground">Cheers Up 🍻</h1>
               <p className="text-muted-foreground">
@@ -142,20 +150,27 @@ export default function ToastApp() {
         {/* Add Toast Section */}
         {showAddToast && (
           <Card className="shadow-lg">
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-4 sm:p-6 space-y-4">
               <h3 className="text-lg font-semibold">Add New Toast</h3>
               <Textarea
                 value={newToastText}
                 onChange={e => setNewToastText(e.target.value)}
                 placeholder="Enter your toast text..."
-                className="resize-none h-24"
+                className="resize-none h-24 text-base"
                 maxLength={500}
+                aria-label="Toast text input"
               />
-              <div className="flex gap-2">
-                <Button onClick={handleAddToast} disabled={!newToastText.trim()}>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button
+                  onClick={handleAddToast}
+                  disabled={!newToastText.trim()}
+                  className="flex-1 h-12 text-base font-medium">
                   Add Toast
                 </Button>
-                <Button variant="outline" onClick={() => setShowAddToast(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAddToast(false)}
+                  className="flex-1 h-12 text-base font-medium">
                   Cancel
                 </Button>
               </div>
@@ -165,12 +180,6 @@ export default function ToastApp() {
 
         {/* Action Buttons */}
         <div className="space-y-4">
-          {/* Add Toast Button */}
-          <Button onClick={() => setShowAddToast(!showAddToast)} variant="outline" className="w-full gap-2">
-            <Plus className="w-5 h-5" />
-            {showAddToast ? 'Cancel' : 'Add New Toast'}
-          </Button>
-
           {/* Like/Dislike Buttons */}
           {currentToast && (
             <div className="flex gap-4 justify-center">
