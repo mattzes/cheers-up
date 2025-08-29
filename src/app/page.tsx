@@ -84,7 +84,7 @@ export default function ToastApp() {
   const isDisliked = currentToast?.userVote === 'dislike';
 
   return (
-    <div className="pt-14 pb-14 pl-4 pr-4 flex flex-col w-screen max-w-[600px] h-screen max-h-[900px] justify-self-center space-y-6">
+    <div className="pt-14 pb-14 pl-4 pr-4 flex flex-col w-screen max-w-[600px] h-dvh max-h-[900px] justify-self-center space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between text-center">
         {/* Add toast button */}
