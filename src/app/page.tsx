@@ -77,7 +77,7 @@ export default function ToastApp() {
   const isDisliked = currentToast?.userVote === 'dislike';
 
   return (
-    <div className="mt-10 mb-10 p-4 flex flex-col w-full h-screen space-y-6">
+    <div className="pt-14 pb-14 pl-4 pr-4 flex flex-col w-full h-screen space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between text-center">
         {/* Add toast button */}
@@ -108,12 +108,12 @@ export default function ToastApp() {
           <p className="text-destructive text-sm">{error}</p>
         </div>
       )}
-      <div className="w-full flex flex-col">
-        {/* Conditional Render: Add Toast Section OR Toast Card with Actions */}
-        {showAddToast ? (
-          /* Add Toast Section */
-          <>
-            <Card className="shadow-lg mt-16 mb-16 flex flex-grow items-center justify-center">
+      {/* Conditional Render: Add Toast Section OR Toast Card with Actions */}
+      {showAddToast ? (
+        /* Add Toast Section */
+        <>
+          <div className="flex-grow flex items-center justify-center">
+            <Card className="shadow-lg flex items-center justify-center w-full">
               <CardContent className="flex flex-col justify-center">
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-center">Add New Toast</h3>
@@ -128,72 +128,72 @@ export default function ToastApp() {
                 </div>
               </CardContent>
             </Card>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              <div className="flex gap-4 justify-center">
-                <Button variant="outline" size="lg" onClick={() => setShowAddToast(false)} className="flex-1 gap-2">
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleAddToast}
-                  disabled={!newToastText.trim()}
-                  variant="default"
-                  size="lg"
-                  className="flex-1 gap-2">
-                  Add Toast
-                </Button>
-              </div>
+          {/* Action Buttons */}
+          <div className="space-y-4">
+            <div className="flex gap-4 justify-center">
+              <Button variant="outline" size="lg" onClick={() => setShowAddToast(false)} className="flex-1 gap-2">
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddToast}
+                disabled={!newToastText.trim()}
+                variant="default"
+                size="lg"
+                className="flex-1 gap-2">
+                Add Toast
+              </Button>
             </div>
-          </>
-        ) : (
-          /* Toast Card with Action Buttons */
-          <>
-            <Card className="shadow-lg mt-16 mb-16 flex items-center justify-center">
-              <div onClick={handleNextToast}>
-                <CardContent className="h-72 flex flex-col justify-center">
-                  {loading || !currentToast ? (
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                      <p className="text-muted-foreground">Loading...</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <p className="text-lg leading-relaxed text-center text-balance">{currentToast.text}</p>
-                    </div>
-                  )}
-                </CardContent>
-                {currentToast && (
-                  <div className="text-center text-sm text-muted-foreground">
-                    <p>Created by: {currentToast.createdBy}</p>
+          </div>
+        </>
+      ) : (
+        /* Toast Card with Action Buttons */
+        <>
+          <div className="flex-grow flex items-center justify-center" onClick={handleNextToast}>
+            <Card className="shadow-lg flex items-center justify-center w-full">
+              <CardContent className="flex flex-col justify-center">
+                {loading || !currentToast ? (
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading...</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <p className="text-lg leading-relaxed text-center text-balance">{currentToast.text}</p>
                   </div>
                 )}
-              </div>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              {/* Like/Dislike Buttons */}
-              {currentToast && (
-                <div className="flex gap-4 justify-center">
-                  <Button variant={isLiked ? 'default' : 'outline'} size="lg" onClick={handleLike} className="flex-1 gap-2">
-                    <ThumbsUp className="w-5 h-5" />
-                    {currentToast.likes}
-                  </Button>
-                  <Button
-                    variant={isDisliked ? 'default' : 'outline'}
-                    size="lg"
-                    onClick={handleDislike}
-                    className="flex-1 gap-2">
-                    <ThumbsDown className="w-5 h-5" />
-                    {currentToast.dislikes}
-                  </Button>
+              </CardContent>
+              {loading || !currentToast ? null : (
+                <div className="text-center text-sm text-muted-foreground">
+                  <p>Created by: {currentToast.createdBy}</p>
                 </div>
               )}
-            </div>
-          </>
-        )}
-      </div>
+            </Card>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-4">
+            {/* Like/Dislike Buttons */}
+            {currentToast && (
+              <div className="flex gap-4 justify-center">
+                <Button variant={isLiked ? 'default' : 'outline'} size="lg" onClick={handleLike} className="flex-1 gap-2">
+                  <ThumbsUp className="w-5 h-5" />
+                  {currentToast.likes}
+                </Button>
+                <Button
+                  variant={isDisliked ? 'default' : 'outline'}
+                  size="lg"
+                  onClick={handleDislike}
+                  className="flex-1 gap-2">
+                  <ThumbsDown className="w-5 h-5" />
+                  {currentToast.dislikes}
+                </Button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
