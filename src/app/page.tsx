@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { ThumbsUp, ThumbsDown, RotateCcw, Sun, Moon, Plus, X, AlertCircle } from 'lucide-react';
-import { useToasts } from '@/hooks/useToasts';
-import { getUnseenToasts } from '@/lib/localVoteStorage';
+import { useToasts, ToastFilter } from '@/hooks/useToasts';
+import { getUnseenToasts, getAllLocalVotes } from '@/lib/localVoteStorage';
 
 export default function ToastApp() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -15,7 +15,8 @@ export default function ToastApp() {
   const [newToastCreator, setNewToastCreator] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { toasts, currentToast, loading, error, loadRandomToast, handleVote, addToast } = useToasts();
+  const { toasts, currentToast, loading, error, currentFilter, loadRandomToast, handleVote, addToast, changeFilter } =
+    useToasts();
 
   useEffect(() => {
     if (isDarkMode) {
@@ -84,8 +85,26 @@ export default function ToastApp() {
   const isLiked = currentToast?.userVote === 'like';
   const isDisliked = currentToast?.userVote === 'dislike';
 
-  // Calculate unseen toasts count
-  const unseenToastsCount = getUnseenToasts(toasts.map(t => t.id)).length;
+  // Calculate unseen toasts count for current filter
+  const getFilteredToastIds = (): string[] => {
+    switch (currentFilter) {
+      case 'liked':
+        const localVotes = getAllLocalVotes();
+        return toasts.filter(toast => localVotes[toast.id]?.vote === 'like').map(toast => toast.id);
+
+      case 'popular':
+        const sortedByLikes = [...toasts].sort((a, b) => b.likes - a.likes);
+        const topHalf = sortedByLikes.slice(0, Math.ceil(sortedByLikes.length / 2));
+        return topHalf.map(toast => toast.id);
+
+      case 'all':
+      default:
+        return toasts.map(toast => toast.id);
+    }
+  };
+
+  const filteredToastIds = getFilteredToastIds();
+  const unseenToastsCount = getUnseenToasts(filteredToastIds).length;
 
   return (
     <div className="pt-14 pb-14 pl-4 pr-4 flex flex-col w-screen max-w-[600px] h-dvh max-h-[900px] justify-self-center space-y-6">
@@ -103,7 +122,7 @@ export default function ToastApp() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Cheers Up 🍻</h1>
           <p className="text-muted-foreground mt-2">
-            {toasts.length > 0 ? `${toasts.length} toasts available` : 'No toasts available'}
+            {toasts.length > 0 ? `${filteredToastIds.length} toasts available` : 'No toasts available'}
           </p>
           {toasts.length > 0 && (
             <p className="text-xs text-muted-foreground">
@@ -183,6 +202,31 @@ export default function ToastApp() {
       ) : (
         /* Toast Card with Action Buttons */
         <>
+          {/* Filter Buttons */}
+          <div className="flex gap-2 justify-center mb-4">
+            <Button
+              variant={currentFilter === 'all' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => changeFilter('all')}
+              className="flex-1">
+              All
+            </Button>
+            <Button
+              variant={currentFilter === 'liked' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => changeFilter('liked')}
+              className="flex-1">
+              ❤️ Liked
+            </Button>
+            <Button
+              variant={currentFilter === 'popular' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => changeFilter('popular')}
+              className="flex-1">
+              🔥 Popular
+            </Button>
+          </div>
+
           <div className="flex-grow flex items-center justify-center" onClick={handleNextToast}>
             <Card className="shadow-lg flex items-center justify-center w-full h-full max-h-90">
               <CardContent className="flex flex-grow flex-col justify-center">
