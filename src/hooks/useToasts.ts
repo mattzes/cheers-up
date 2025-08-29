@@ -60,9 +60,6 @@ export const useToasts = (userId: string = 'anonymous') => {
         const updatedToast = await getToastWithUserVote(toastId, userId);
         setCurrentToast(updatedToast);
       }
-      
-      // Refresh all toasts to get updated counts
-      await loadToasts();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update vote');
     }
