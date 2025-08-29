@@ -7,8 +7,9 @@ import {
   updateToastVote, 
   getToastWithUserVote,
 } from '@/lib/toastService';
+import { getLocalVote, setLocalVote } from '@/lib/localVoteStorage';
 
-export const useToasts = (userId: string = 'anonymous') => {
+export const useToasts = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [currentToast, setCurrentToast] = useState<ToastWithUserVote | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,7 +29,7 @@ export const useToasts = (userId: string = 'anonymous') => {
     }
   }, []);
 
-  // Load random toast
+  // Load random toast with local vote
   const loadRandomToast = useCallback(async () => {
     try {
       setLoading(true);
@@ -36,7 +37,15 @@ export const useToasts = (userId: string = 'anonymous') => {
       const randomToast = await getRandomToast();
       
       if (randomToast) {
-        const toastWithVote = await getToastWithUserVote(randomToast.id, userId);
+        // Get local vote for this toast
+        const localVote = getLocalVote(randomToast.id);
+        
+        // Create ToastWithUserVote object with local vote
+        const toastWithVote: ToastWithUserVote = {
+          ...randomToast,
+          userVote: localVote
+        };
+        
         setCurrentToast(toastWithVote);
       } else {
         setCurrentToast(null);
@@ -46,23 +55,37 @@ export const useToasts = (userId: string = 'anonymous') => {
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, []);
 
-  // Handle like/dislike
+  // Handle like/dislike with local storage
   const handleVote = useCallback(async (toastId: string, vote: 'like' | 'dislike' | null) => {
     try {
       setError(null);
-      await updateToastVote({ toastId, userId, vote });
+      
+      // Update local storage first
+      setLocalVote(toastId, vote);
+      
+      // Update Firebase vote counts (without user tracking)
+      await updateToastVote({ toastId, vote });
       
       // Update current toast if it's the one being voted on
       if (currentToast && currentToast.id === toastId) {
-        const updatedToast = await getToastWithUserVote(toastId, userId);
+        const updatedToast: ToastWithUserVote = {
+          ...currentToast,
+          userVote: vote,
+          likes: vote === 'like' 
+            ? (currentToast.userVote === 'like' ? currentToast.likes : currentToast.likes + 1)
+            : (currentToast.userVote === 'like' ? currentToast.likes - 1 : currentToast.likes),
+          dislikes: vote === 'dislike'
+            ? (currentToast.userVote === 'dislike' ? currentToast.dislikes : currentToast.dislikes + 1)
+            : (currentToast.userVote === 'dislike' ? currentToast.dislikes - 1 : currentToast.dislikes)
+        };
         setCurrentToast(updatedToast);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update vote');
     }
-  }, [currentToast, userId, loadToasts]);
+  }, [currentToast]);
 
   // Create new toast
   const addToast = useCallback(async (text: string, createdBy?: string) => {

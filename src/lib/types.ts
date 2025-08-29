@@ -24,7 +24,6 @@ export interface CreateToastData {
 
 export interface UpdateToastVoteData {
   toastId: string;
-  userId: string;
   vote: 'like' | 'dislike' | null;
 }
 

@@ -113,70 +113,34 @@ export const createToast = async (toastData: CreateToastData): Promise<Toast> =>
   }
 };
 
-// Update toast vote (Hybrid approach: counts in toast + optional vote records)
+// Update toast vote (Simplified - only counts, no individual user tracking)
 export const updateToastVote = async (voteData: UpdateToastVoteData): Promise<void> => {
   try {
-    const { toastId, userId, vote } = voteData;
-    
-    // Get current vote for this user and toast
-    const voteQuery = query(
-      collection(db, VOTES_COLLECTION),
-      where('toastId', '==', toastId),
-      where('userId', '==', userId)
-    );
-    const voteSnapshot = await getDocs(voteQuery);
+    const { toastId, vote } = voteData;
     
     const toastRef = doc(db, TOASTS_COLLECTION, toastId);
     
-    if (voteSnapshot.empty) {
-      // No previous vote, create new vote
-      if (vote) {
-        // Optional: Create vote record for audit trail
-        await addDoc(collection(db, VOTES_COLLECTION), {
-          toastId,
-          userId,
-          vote,
-          createdAt: serverTimestamp(),
-        });
-        
-        // Update toast counts directly
-        await updateDoc(toastRef, {
-          [vote === 'like' ? 'likes' : 'dislikes']: increment(1),
-          'voteSummary.totalVotes': increment(1),
-          'voteSummary.lastVoteAt': serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-      }
-    } else {
-      // Previous vote exists
-      const existingVote = voteSnapshot.docs[0];
-      const existingVoteData = existingVote.data();
-      
-      if (vote === null) {
-        // Remove vote
-        await deleteDoc(doc(db, VOTES_COLLECTION, existingVote.id));
-        
-        // Update toast counts
-        await updateDoc(toastRef, {
-          [existingVoteData.vote === 'like' ? 'likes' : 'dislikes']: increment(-1),
-          'voteSummary.totalVotes': increment(-1),
-          updatedAt: serverTimestamp(),
-        });
-      } else if (vote !== existingVoteData.vote) {
-        // Change vote
-        await updateDoc(doc(db, VOTES_COLLECTION, existingVote.id), {
-          vote,
-          updatedAt: serverTimestamp(),
-        });
-        
-        // Update toast counts
-        await updateDoc(toastRef, {
-          [existingVoteData.vote === 'like' ? 'likes' : 'dislikes']: increment(-1),
-          [vote === 'like' ? 'likes' : 'dislikes']: increment(1),
-          'voteSummary.lastVoteAt': serverTimestamp(),
-          updatedAt: serverTimestamp(),
-        });
-      }
+    // Simple increment/decrement based on vote
+    if (vote === 'like') {
+      await updateDoc(toastRef, {
+        'likes': increment(1),
+        'voteSummary.totalVotes': increment(1),
+        'voteSummary.lastVoteAt': serverTimestamp(),
+        'updatedAt': serverTimestamp(),
+      });
+    } else if (vote === 'dislike') {
+      await updateDoc(toastRef, {
+        'dislikes': increment(1),
+        'voteSummary.totalVotes': increment(1),
+        'voteSummary.lastVoteAt': serverTimestamp(),
+        'updatedAt': serverTimestamp(),
+      });
+    } else if (vote === null) {
+      // This case is handled by the frontend logic
+      // We don't need to decrement here since we don't track individual votes
+      await updateDoc(toastRef, {
+        'updatedAt': serverTimestamp(),
+      });
     }
   } catch (error) {
     console.error('Error updating toast vote:', error);

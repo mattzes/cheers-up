@@ -4,7 +4,7 @@
 
 ### `toasts` Collection
 
-Stores all toasts with vote counts embedded (hybrid approach):
+Stores all toasts with vote counts embedded:
 
 ```typescript
 interface Toast {
@@ -40,59 +40,63 @@ interface Toast {
 }
 ```
 
-### `votes` Collection (Optional - for audit trail)
+## Local Storage for Anonymous User Votes
 
-Stores individual vote records for audit purposes:
+Since the app supports anonymous users, individual vote tracking is done locally on each device using `localStorage`:
 
 ```typescript
-interface VoteRecord {
-  id: string; // Auto-generated document ID
-  toastId: string; // Reference to the toast
-  userId: string; // User ID (or "anonymous")
-  vote: 'like' | 'dislike'; // Type of vote
-  createdAt: Date; // Creation date
+interface LocalVoteStorage {
+  votes: Record<string, LocalVote>;
+  lastUpdated: number;
+}
+
+interface LocalVote {
+  toastId: string;
+  vote: 'like' | 'dislike';
+  timestamp: number;
 }
 ```
 
-**Example Document:**
+**Storage Key:** `cheers-up-user-votes`
+
+**Example localStorage data:**
 
 ```json
 {
-  "id": "vote123",
-  "toastId": "abc123",
-  "userId": "anonymous",
-  "vote": "like",
-  "createdAt": "2024-01-15T10:30:00Z"
+  "votes": {
+    "abc123": {
+      "toastId": "abc123",
+      "vote": "like",
+      "timestamp": 1705312200000
+    },
+    "def456": {
+      "toastId": "def456",
+      "vote": "dislike",
+      "timestamp": 1705312300000
+    }
+  },
+  "lastUpdated": 1705312300000
 }
 ```
 
-## Design Decision: Hybrid Approach
+## Design Decision: Local Storage for Anonymous Users
 
 ### Why this approach?
 
-1. **Performance**: Vote counts are embedded in toast documents for fast reads
-2. **Scalability**: Individual vote records are optional and can be disabled for high-traffic apps
-3. **Flexibility**: Can easily switch between approaches based on needs
-4. **Audit Trail**: Optional vote records for compliance/analytics
+1. **Privacy**: User votes remain completely anonymous and local
+2. **Performance**: No need to query Firebase for individual user votes
+3. **Multi-Device**: Each device maintains its own vote history
+4. **Simplicity**: Firebase only stores aggregate vote counts
+5. **Scalability**: No user-specific data in Firebase
 
-### Alternative Approaches:
+### How it works:
 
-**Option 1: Votes only in toast documents**
+1. **Voting**: User clicks like/dislike → stored locally + Firebase count updated
+2. **Loading**: Toast loads → local vote status checked and applied
+3. **Persistence**: Votes survive browser sessions via localStorage
+4. **Privacy**: No user identification or tracking
 
-- ✅ Simple, fast reads
-- ❌ No audit trail, can't track individual votes
-
-**Option 2: Separate collections only**
-
-- ✅ Full audit trail, normalized data
-- ❌ More complex, slower reads
-
-**Option 3: Hybrid (current)**
-
-- ✅ Best of both worlds
-- ❌ Slightly more complex
-
-## Security Rules (Firestore Rules)
+### Security Rules (Firestore Rules)
 
 ```javascript
 rules_version = '2';
@@ -102,12 +106,6 @@ service cloud.firestore {
     match /toasts/{toastId} {
       allow read: if true;
       allow write: if request.auth != null || request.resource.data.createdBy == "system";
-    }
-
-    // Votes can be read and written by everyone (for demo purposes)
-    // In production, you might want to restrict this
-    match /votes/{voteId} {
-      allow read, write: if true;
     }
   }
 }
@@ -124,16 +122,18 @@ service cloud.firestore {
 
 ### Vote Management
 
-- `updateToastVote(data)`: Update vote for a toast
-- `getUserVote(toastId, userId)`: Get user vote
-- `getToastWithUserVote(toastId, userId)`: Get toast with user vote
+- `updateToastVote(data)`: Update vote count in Firebase
+- `getLocalVote(toastId)`: Get user vote from localStorage
+- `setLocalVote(toastId, vote)`: Set user vote in localStorage
 
-### Development
+### Local Storage Functions
 
-- `initializeSampleData()`: Load sample data for development
+- `getLocalVotes()`: Get all local votes
+- `saveLocalVotes(votes)`: Save all local votes
+- `clearLocalVotes()`: Clear all local votes (for testing)
 
 ## Development
 
 For development, `"system"` is used as `createdBy` by default. In a production environment, a real user ID should be used here.
 
-Votes are stored with `"anonymous"` as `userId`. In a real application, a unique user ID should be used here.
+Votes are stored locally on each device, making the app truly anonymous and multi-user friendly.
