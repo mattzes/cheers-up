@@ -11,6 +11,7 @@ export default function ToastApp() {
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [showAddToast, setShowAddToast] = useState(false);
   const [newToastText, setNewToastText] = useState('');
+  const [newToastCreator, setNewToastCreator] = useState('');
 
   const { toasts, currentToast, loading, error, loadRandomToast, handleVote, addToast } = useToasts();
 
@@ -64,8 +65,9 @@ export default function ToastApp() {
   const handleAddToast = async () => {
     if (newToastText.trim()) {
       try {
-        await addToast(newToastText.trim());
+        await addToast(newToastText.trim(), newToastCreator.trim() || undefined);
         setNewToastText('');
+        setNewToastCreator('');
         setShowAddToast(false);
       } catch (error) {
         console.error('Failed to add toast:', error);
@@ -113,19 +115,26 @@ export default function ToastApp() {
         /* Add Toast Section */
         <>
           <div className="flex-grow flex items-center justify-center">
-            <Card className="shadow-lg flex items-center justify-center w-full">
-              <CardContent className="flex w-full flex-col justify-center">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-center">Add New Toast</h3>
-                  <Textarea
-                    value={newToastText}
-                    onChange={e => setNewToastText(e.target.value)}
-                    placeholder="Enter your toast text..."
-                    className="resize-none text-base border-0 focus:ring-0 bg-transparent text-center text-lg leading-relaxed"
-                    maxLength={500}
-                    aria-label="Toast text input"
-                  />
-                </div>
+            <Card className="shadow-lg flex items-center justify-center w-full h-full max-h-90">
+              <h3 className="text-lg font-semibold text-center">Add New Toast</h3>
+              <CardContent className="flex flex-grow w-full flex-col justify-center">
+                <Textarea
+                  value={newToastText}
+                  onChange={e => setNewToastText(e.target.value)}
+                  placeholder="Enter your toast text..."
+                  className="resize-none bg-transparent text-center text-lg h-full"
+                  maxLength={300}
+                  aria-label="Toast text input"
+                />
+                <input
+                  type="text"
+                  value={newToastCreator}
+                  onChange={e => setNewToastCreator(e.target.value)}
+                  placeholder="Your name (optional)"
+                  className="mt-4 mb-2 px-3 py-2 border rounded-md w-full text-center bg-transparent text-base"
+                  maxLength={30}
+                  aria-label="Creator name input"
+                />
               </CardContent>
             </Card>
           </div>
@@ -151,7 +160,7 @@ export default function ToastApp() {
         /* Toast Card with Action Buttons */
         <>
           <div className="flex-grow flex items-center justify-center" onClick={handleNextToast}>
-            <Card className="shadow-lg flex items-center justify-center w-full h-72">
+            <Card className="shadow-lg flex items-center justify-center w-full h-full max-h-90">
               <CardContent className="flex flex-grow flex-col justify-center">
                 {loading || !currentToast ? (
                   <div className="text-center">

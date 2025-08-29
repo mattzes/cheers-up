@@ -91,12 +91,11 @@ export const createToast = async (toastData: CreateToastData): Promise<Toast> =>
       text: toastData.text,
       likes: 0,
       dislikes: 0,
-      createdBy: toastData.createdBy || 'system',
+      createdBy: toastData.createdBy || 'anonymous',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       voteSummary: {
         totalVotes: 0,
-        lastVoteAt: undefined,
       },
     };
     
