@@ -115,33 +115,40 @@ export default function ToastApp() {
         {/* Conditional Render: Add Toast Section OR Toast Card with Actions */}
         {showAddToast ? (
           /* Add Toast Section */
-          <Card className="shadow-lg">
-            <CardContent className="p-4 sm:p-6 space-y-4">
-              <h3 className="text-lg font-semibold">Add New Toast</h3>
-              <Textarea
-                value={newToastText}
-                onChange={e => setNewToastText(e.target.value)}
-                placeholder="Enter your toast text..."
-                className="resize-none h-24 text-base"
-                maxLength={500}
-                aria-label="Toast text input"
-              />
-              <div className="flex flex-col sm:flex-row gap-2">
+          <>
+            <Card className="shadow-lg mt-16 mb-16 flex items-center justify-center">
+              <CardContent className="h-72 flex flex-col justify-center">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-center">Add New Toast</h3>
+                  <Textarea
+                    value={newToastText}
+                    onChange={e => setNewToastText(e.target.value)}
+                    placeholder="Enter your toast text..."
+                    className="resize-none text-base border-0 focus:ring-0 bg-transparent text-center text-lg leading-relaxed"
+                    maxLength={500}
+                    aria-label="Toast text input"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Action Buttons */}
+            <div className="space-y-4">
+              <div className="flex gap-4 justify-center">
                 <Button
                   onClick={handleAddToast}
                   disabled={!newToastText.trim()}
-                  className="flex-1 h-12 text-base font-medium">
+                  variant="default"
+                  size="lg"
+                  className="flex-1 gap-2">
                   Add Toast
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowAddToast(false)}
-                  className="flex-1 h-12 text-base font-medium">
+                <Button variant="outline" size="lg" onClick={() => setShowAddToast(false)} className="flex-1 gap-2">
                   Cancel
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </>
         ) : (
           /* Toast Card with Action Buttons */
           <>
