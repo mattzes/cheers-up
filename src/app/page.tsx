@@ -77,7 +77,7 @@ export default function ToastApp() {
   const isDisliked = currentToast?.userVote === 'dislike';
 
   return (
-    <div className="min-h-screen bg-background p-4 flex items-center justify-center">
+    <div className="min-h-screen mt-10 mb-10 bg-background p-4 flex justify-center">
       <div className="w-full max-w-md mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
@@ -111,91 +111,96 @@ export default function ToastApp() {
             <p className="text-destructive text-sm">{error}</p>
           </div>
         )}
+        <div className="h-90 w-full flex flex-col">
+          {/* Conditional Render: Add Toast Section OR Toast Card with Actions */}
+          {showAddToast ? (
+            /* Add Toast Section */
+            <>
+              <Card className="shadow-lg mt-16 mb-16 flex items-center justify-center">
+                <CardContent className="flex flex-col justify-center">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-center">Add New Toast</h3>
+                    <Textarea
+                      value={newToastText}
+                      onChange={e => setNewToastText(e.target.value)}
+                      placeholder="Enter your toast text..."
+                      className="resize-none text-base border-0 focus:ring-0 bg-transparent text-center text-lg leading-relaxed"
+                      maxLength={500}
+                      aria-label="Toast text input"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
 
-        {/* Conditional Render: Add Toast Section OR Toast Card with Actions */}
-        {showAddToast ? (
-          /* Add Toast Section */
-          <>
-            <Card className="shadow-lg mt-16 mb-16 flex items-center justify-center">
-              <CardContent className="h-72 flex flex-col justify-center">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-center">Add New Toast</h3>
-                  <Textarea
-                    value={newToastText}
-                    onChange={e => setNewToastText(e.target.value)}
-                    placeholder="Enter your toast text..."
-                    className="resize-none text-base border-0 focus:ring-0 bg-transparent text-center text-lg leading-relaxed"
-                    maxLength={500}
-                    aria-label="Toast text input"
-                  />
+              {/* Action Buttons */}
+              <div className="space-y-4">
+                <div className="flex gap-4 justify-center">
+                  <Button variant="outline" size="lg" onClick={() => setShowAddToast(false)} className="flex-1 gap-2">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleAddToast}
+                    disabled={!newToastText.trim()}
+                    variant="default"
+                    size="lg"
+                    className="flex-1 gap-2">
+                    Add Toast
+                  </Button>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              <div className="flex gap-4 justify-center">
-                <Button
-                  onClick={handleAddToast}
-                  disabled={!newToastText.trim()}
-                  variant="default"
-                  size="lg"
-                  className="flex-1 gap-2">
-                  Add Toast
-                </Button>
-                <Button variant="outline" size="lg" onClick={() => setShowAddToast(false)} className="flex-1 gap-2">
-                  Cancel
-                </Button>
               </div>
-            </div>
-          </>
-        ) : (
-          /* Toast Card with Action Buttons */
-          <>
-            <Card className="shadow-lg mt-16 mb-16 flex items-center justify-center">
-              <div onClick={handleNextToast}>
-                <CardContent className="h-72 flex flex-col justify-center">
-                  {loading || !currentToast ? (
-                    <div className="text-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                      <p className="text-muted-foreground">Loading...</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <p className="text-lg leading-relaxed text-center text-balance">{currentToast.text}</p>
+            </>
+          ) : (
+            /* Toast Card with Action Buttons */
+            <>
+              <Card className="shadow-lg mt-16 mb-16 flex items-center justify-center">
+                <div onClick={handleNextToast}>
+                  <CardContent className="h-72 flex flex-col justify-center">
+                    {loading || !currentToast ? (
+                      <div className="text-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                        <p className="text-muted-foreground">Loading...</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <p className="text-lg leading-relaxed text-center text-balance">{currentToast.text}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                  {currentToast && (
+                    <div className="text-center text-sm text-muted-foreground">
+                      <p>Created by: {currentToast.createdBy}</p>
                     </div>
                   )}
-                </CardContent>
+                </div>
+              </Card>
+
+              {/* Action Buttons */}
+              <div className="space-y-4">
+                {/* Like/Dislike Buttons */}
                 {currentToast && (
-                  <div className="text-center text-sm text-muted-foreground">
-                    <p>Created by: {currentToast.createdBy}</p>
+                  <div className="flex gap-4 justify-center">
+                    <Button
+                      variant={isLiked ? 'default' : 'outline'}
+                      size="lg"
+                      onClick={handleLike}
+                      className="flex-1 gap-2">
+                      <ThumbsUp className="w-5 h-5" />
+                      {currentToast.likes}
+                    </Button>
+                    <Button
+                      variant={isDisliked ? 'default' : 'outline'}
+                      size="lg"
+                      onClick={handleDislike}
+                      className="flex-1 gap-2">
+                      <ThumbsDown className="w-5 h-5" />
+                      {currentToast.dislikes}
+                    </Button>
                   </div>
                 )}
               </div>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="space-y-4">
-              {/* Like/Dislike Buttons */}
-              {currentToast && (
-                <div className="flex gap-4 justify-center">
-                  <Button variant={isLiked ? 'default' : 'outline'} size="lg" onClick={handleLike} className="flex-1 gap-2">
-                    <ThumbsUp className="w-5 h-5" />
-                    {currentToast.likes}
-                  </Button>
-                  <Button
-                    variant={isDisliked ? 'default' : 'outline'}
-                    size="lg"
-                    onClick={handleDislike}
-                    className="flex-1 gap-2">
-                    <ThumbsDown className="w-5 h-5" />
-                    {currentToast.dislikes}
-                  </Button>
-                </div>
-              )}
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
