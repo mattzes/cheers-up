@@ -96,7 +96,7 @@ export const createToast = async (toastData: CreateToastData): Promise<Toast> =>
       updatedAt: serverTimestamp(),
       voteSummary: {
         totalVotes: 0,
-        lastVoteAt: null,
+        lastVoteAt: undefined,
       },
     };
     
