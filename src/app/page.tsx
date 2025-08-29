@@ -77,7 +77,7 @@ export default function ToastApp() {
   const isDisliked = currentToast?.userVote === 'dislike';
 
   return (
-    <div className="pt-14 pb-14 pl-4 pr-4 flex flex-col max-w-screen-sm h-screen max-h-[900px] justify-self-center space-y-6">
+    <div className="pt-14 pb-14 pl-4 pr-4 flex flex-col w-screen max-w-[600px] h-screen max-h-[900px] justify-self-center space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between text-center">
         {/* Add toast button */}
@@ -114,7 +114,7 @@ export default function ToastApp() {
         <>
           <div className="flex-grow flex items-center justify-center">
             <Card className="shadow-lg flex items-center justify-center w-full">
-              <CardContent className="flex flex-col justify-center">
+              <CardContent className="flex w-full flex-col justify-center">
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold text-center">Add New Toast</h3>
                   <Textarea
