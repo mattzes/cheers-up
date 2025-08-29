@@ -125,9 +125,6 @@ export default function ToastApp() {
               <div className="space-y-4">
                 <p className="text-lg leading-relaxed text-center text-balance">{currentToast.text}</p>
                 <div className="text-center text-sm text-muted-foreground">
-                  <p>
-                    Likes: {currentToast.likes} | Dislikes: {currentToast.dislikes}
-                  </p>
                   <p>Created by: {currentToast.createdBy}</p>
                 </div>
               </div>
@@ -179,7 +176,7 @@ export default function ToastApp() {
             <div className="flex gap-4 justify-center">
               <Button variant={isLiked ? 'default' : 'outline'} size="lg" onClick={handleLike} className="flex-1 gap-2">
                 <ThumbsUp className="w-5 h-5" />
-                Like
+                {currentToast.likes}
               </Button>
               <Button
                 variant={isDisliked ? 'destructive' : 'outline'}
@@ -187,7 +184,7 @@ export default function ToastApp() {
                 onClick={handleDislike}
                 className="flex-1 gap-2">
                 <ThumbsDown className="w-5 h-5" />
-                Dislike
+                {currentToast.dislikes}
               </Button>
             </div>
           )}
