@@ -12,7 +12,7 @@ export default function ToastApp() {
   const [showAddToast, setShowAddToast] = useState(false);
   const [newToastText, setNewToastText] = useState('');
 
-  const { toasts, currentToast, loading, error, loadRandomToast, handleVote, addToast, initializeData } = useToasts();
+  const { toasts, currentToast, loading, error, loadRandomToast, handleVote, addToast } = useToasts();
 
   useEffect(() => {
     if (isDarkMode) {
@@ -73,15 +73,6 @@ export default function ToastApp() {
     }
   };
 
-  const handleInitializeData = async () => {
-    try {
-      await initializeData();
-      loadRandomToast();
-    } catch (error) {
-      console.error('Failed to initialize data:', error);
-    }
-  };
-
   const isLiked = currentToast?.userVote === 'like';
   const isDisliked = currentToast?.userVote === 'dislike';
 
@@ -125,21 +116,14 @@ export default function ToastApp() {
         <Card className="shadow-lg mt-16 mb-16  flex items-center justify-center">
           <div onClick={handleNextToast}>
             <CardContent className="h-72 flex flex-col justify-center">
-              {loading ? (
+              {loading || !currentToast ? (
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                   <p className="text-muted-foreground">Loading...</p>
                 </div>
-              ) : currentToast ? (
+              ) : (
                 <div className="space-y-4">
                   <p className="text-lg leading-relaxed text-center text-balance">{currentToast.text}</p>
-                </div>
-              ) : (
-                <div className="text-center space-y-4">
-                  <p className="text-muted-foreground">No toasts available</p>
-                  <Button onClick={handleInitializeData} variant="outline">
-                    Initialize Sample Data
-                  </Button>
                 </div>
               )}
             </CardContent>

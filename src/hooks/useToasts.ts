@@ -6,7 +6,6 @@ import {
   createToast, 
   updateToastVote, 
   getToastWithUserVote,
-  initializeSampleData 
 } from '@/lib/toastService';
 
 export const useToasts = (userId: string = 'anonymous') => {
@@ -78,17 +77,6 @@ export const useToasts = (userId: string = 'anonymous') => {
     }
   }, []);
 
-  // Initialize sample data
-  const initializeData = useCallback(async () => {
-    try {
-      setError(null);
-      await initializeSampleData();
-      await loadToasts();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to initialize data');
-    }
-  }, [loadToasts]);
-
   // Load initial data
   useEffect(() => {
     loadToasts();
@@ -103,6 +91,5 @@ export const useToasts = (userId: string = 'anonymous') => {
     loadRandomToast,
     handleVote,
     addToast,
-    initializeData,
   };
 };

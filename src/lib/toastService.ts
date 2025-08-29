@@ -222,30 +222,3 @@ export const getToastWithUserVote = async (toastId: string, userId: string): Pro
     throw error;
   }
 };
-
-// Initialize with sample data (for development)
-export const initializeSampleData = async (): Promise<void> => {
-  try {
-    const sampleToasts = [
-      "May we all stay healthy and never see each other again!",
-      "Here's to the women who love us, and to those who will love us!",
-      "May your life be as sweet as wine and as short as the bill!",
-      "To friendship - it's like wine, the older the better!",
-      "May your glass always be full and your worries always empty!",
-      "To love - it's like a hangover, sometimes it hurts, but you miss it when it's gone!",
-      "Here's to the past - it's over, to the future - it's uncertain, and to the moment - it's now!",
-      "May your life be as happy as a dog with two tails!",
-      "To health - without it everything is nothing!",
-      "May your life be as rich as your heart and as full as your glass!"
-    ];
-    
-    for (const text of sampleToasts) {
-      await createToast({ text, createdBy: 'system' });
-    }
-    
-    console.log('Sample data initialized successfully');
-  } catch (error) {
-    console.error('Error initializing sample data:', error);
-    throw error;
-  }
-};
