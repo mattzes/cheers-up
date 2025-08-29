@@ -79,6 +79,36 @@ interface LocalVote {
 }
 ```
 
+## Seen Toasts Tracking
+
+To ensure users see each toast only once until all toasts have been seen, the app tracks seen toasts locally:
+
+```typescript
+interface SeenToastsStorage {
+  seenToastIds: string[];
+  lastUpdated: number;
+}
+```
+
+**Storage Key:** `cheers-up-seen-toasts`
+
+**Example localStorage data:**
+
+```json
+{
+  "seenToastIds": ["abc123", "def456", "ghi789"],
+  "lastUpdated": 1705312300000
+}
+```
+
+**How it works:**
+
+1. When a toast is displayed, it's marked as "seen"
+2. Only unseen toasts are shown in the random selection
+3. When all toasts have been seen, the seen list is cleared
+4. User sees "All seen - starting over!" message
+5. Process repeats with fresh random selection
+
 ## Design Decision: Local Storage for Anonymous Users
 
 ### Why this approach?
@@ -131,6 +161,14 @@ service cloud.firestore {
 - `getLocalVotes()`: Get all local votes
 - `saveLocalVotes(votes)`: Save all local votes
 - `clearLocalVotes()`: Clear all local votes (for testing)
+
+### Seen Toasts Functions
+
+- `getSeenToasts()`: Get all seen toast IDs
+- `markToastAsSeen(toastId)`: Mark a toast as seen
+- `getUnseenToasts(allToastIds)`: Get list of unseen toast IDs
+- `resetSeenToastsIfAllSeen(allToastIds)`: Reset seen list if all toasts seen
+- `clearSeenToasts()`: Clear all seen toasts (for testing)
 
 ## Development
 

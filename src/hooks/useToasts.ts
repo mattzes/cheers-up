@@ -3,11 +3,18 @@ import { Toast, ToastWithUserVote } from '@/lib/types';
 import { 
   getAllToasts, 
   getRandomToast, 
+  getRandomToastFromIds,
   createToast, 
   updateToastVote, 
   getToastWithUserVote,
 } from '@/lib/toastService';
-import { getLocalVote, setLocalVote } from '@/lib/localVoteStorage';
+import { 
+  getLocalVote, 
+  setLocalVote, 
+  getUnseenToasts, 
+  markToastAsSeen, 
+  resetSeenToastsIfAllSeen 
+} from '@/lib/localVoteStorage';
 
 export const useToasts = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -29,14 +36,41 @@ export const useToasts = () => {
     }
   }, []);
 
-  // Load random toast with local vote
+  // Load random toast with unseen logic
   const loadRandomToast = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const randomToast = await getRandomToast();
+      
+      // Get all toast IDs
+      const allToastIds = toasts.map(toast => toast.id);
+      
+      if (allToastIds.length === 0) {
+        // No toasts available
+        setCurrentToast(null);
+        return;
+      }
+      
+      // Check if we need to reset seen toasts (all have been seen)
+      const wasReset = resetSeenToastsIfAllSeen(allToastIds);
+      
+      // Get unseen toast IDs
+      const unseenToastIds = getUnseenToasts(allToastIds);
+      
+      let randomToast: Toast | null;
+      
+      if (unseenToastIds.length > 0) {
+        // Get random toast from unseen pool
+        randomToast = await getRandomToastFromIds(unseenToastIds);
+      } else {
+        // Fallback to any random toast (shouldn't happen after reset)
+        randomToast = await getRandomToast();
+      }
       
       if (randomToast) {
+        // Mark this toast as seen
+        markToastAsSeen(randomToast.id);
+        
         // Get local vote for this toast
         const localVote = getLocalVote(randomToast.id);
         
@@ -55,7 +89,7 @@ export const useToasts = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [toasts]);
 
   // Handle like/dislike with local storage
   const handleVote = useCallback(async (toastId: string, vote: 'like' | 'dislike' | null) => {

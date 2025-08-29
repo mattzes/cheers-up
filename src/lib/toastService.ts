@@ -84,6 +84,25 @@ export const getRandomToast = async (): Promise<Toast | null> => {
   }
 };
 
+// Get a random toast from a specific list of toast IDs
+export const getRandomToastFromIds = async (toastIds: string[]): Promise<Toast | null> => {
+  try {
+    if (toastIds.length === 0) {
+      return null;
+    }
+    
+    // Select a random ID from the provided list
+    const randomIndex = Math.floor(Math.random() * toastIds.length);
+    const randomToastId = toastIds[randomIndex];
+    
+    // Get the toast by ID
+    return await getToastById(randomToastId);
+  } catch (error) {
+    console.error('Error fetching random toast from IDs:', error);
+    throw error;
+  }
+};
+
 // Create a new toast
 export const createToast = async (toastData: CreateToastData): Promise<Toast> => {
   try {

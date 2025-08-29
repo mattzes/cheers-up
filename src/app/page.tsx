@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { ThumbsUp, ThumbsDown, RotateCcw, Sun, Moon, Plus, X, AlertCircle } from 'lucide-react';
 import { useToasts } from '@/hooks/useToasts';
+import { getUnseenToasts } from '@/lib/localVoteStorage';
 
 export default function ToastApp() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -83,6 +84,9 @@ export default function ToastApp() {
   const isLiked = currentToast?.userVote === 'like';
   const isDisliked = currentToast?.userVote === 'dislike';
 
+  // Calculate unseen toasts count
+  const unseenToastsCount = getUnseenToasts(toasts.map(t => t.id)).length;
+
   return (
     <div className="pt-14 pb-14 pl-4 pr-4 flex flex-col w-screen max-w-[600px] h-dvh max-h-[900px] justify-self-center space-y-6">
       {/* Header */}
@@ -101,6 +105,11 @@ export default function ToastApp() {
           <p className="text-muted-foreground mt-2">
             {toasts.length > 0 ? `${toasts.length} toasts available` : 'No toasts available'}
           </p>
+          {toasts.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {unseenToastsCount > 0 ? `${unseenToastsCount} unseen` : 'All seen - starting over!'}
+            </p>
+          )}
         </div>
         {/* Dark mode toggle button */}
         <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="w-10 h-10" aria-label="Toggle dark mode">
