@@ -12,9 +12,9 @@ import {
 import { 
   getLocalVote, 
   setLocalVote, 
-  getUnseenToasts, 
-  markToastAsSeen, 
-  resetSeenToastsIfAllSeen,
+  getUnseenToastsForFilter, 
+  markToastAsSeenForFilter, 
+  resetSeenToastsIfAllSeenForFilter,
   getAllLocalVotes
 } from '@/lib/localVoteStorage';
 
@@ -77,11 +77,11 @@ export const useToasts = () => {
         return;
       }
       
-      // Get unseen toast IDs from filtered pool
-      const unseenToastIds = getUnseenToasts(filteredToastIds);
+      // Get unseen toast IDs from filtered pool for current filter
+      const unseenToastIds = getUnseenToastsForFilter(currentFilter, filteredToastIds);
       
-      // Check if we need to reset seen toasts (all filtered toasts have been seen)
-      const wasReset = resetSeenToastsIfAllSeen(filteredToastIds);
+      // Check if we need to reset seen toasts (all filtered toasts have been seen for this filter)
+      const wasReset = resetSeenToastsIfAllSeenForFilter(currentFilter, filteredToastIds);
       
       let randomToast: Toast | null;
       
@@ -96,8 +96,8 @@ export const useToasts = () => {
       }
       
       if (randomToast) {
-        // Mark this toast as seen
-        markToastAsSeen(randomToast.id);
+        // Mark this toast as seen for the current filter
+        markToastAsSeenForFilter(currentFilter, randomToast.id);
         
         // Get local vote for this toast
         const localVote = getLocalVote(randomToast.id);

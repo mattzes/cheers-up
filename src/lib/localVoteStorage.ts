@@ -1,6 +1,9 @@
 // Local storage for anonymous user votes
 const VOTES_STORAGE_KEY = 'cheers-up-user-votes';
 const SEEN_TOASTS_STORAGE_KEY = 'cheers-up-seen-toasts';
+const SEEN_TOASTS_ALL_STORAGE_KEY = 'cheers-up-seen-toasts-all';
+const SEEN_TOASTS_LIKED_STORAGE_KEY = 'cheers-up-seen-toasts-liked';
+const SEEN_TOASTS_POPULAR_STORAGE_KEY = 'cheers-up-seen-toasts-popular';
 
 export interface LocalVote {
   toastId: string;
@@ -85,7 +88,7 @@ export const clearLocalVotes = (): void => {
   }
 };
 
-// Seen toasts management
+// Seen toasts management - Legacy function for backward compatibility
 export const getSeenToasts = (): Set<string> => {
   try {
     const stored = localStorage.getItem(SEEN_TOASTS_STORAGE_KEY);
@@ -100,6 +103,36 @@ export const getSeenToasts = (): Set<string> => {
   return new Set<string>();
 };
 
+// Get seen toasts for a specific filter
+export const getSeenToastsForFilter = (filter: 'all' | 'liked' | 'popular'): Set<string> => {
+  const storageKey = getStorageKeyForFilter(filter);
+  try {
+    const stored = localStorage.getItem(storageKey);
+    if (stored) {
+      const data = JSON.parse(stored);
+      return new Set(data.seenToastIds || []);
+    }
+  } catch (error) {
+    console.warn(`Failed to load seen toasts for filter ${filter}:`, error);
+  }
+  
+  return new Set<string>();
+};
+
+// Get storage key for a specific filter
+const getStorageKeyForFilter = (filter: 'all' | 'liked' | 'popular'): string => {
+  switch (filter) {
+    case 'all':
+      return SEEN_TOASTS_ALL_STORAGE_KEY;
+    case 'liked':
+      return SEEN_TOASTS_LIKED_STORAGE_KEY;
+    case 'popular':
+      return SEEN_TOASTS_POPULAR_STORAGE_KEY;
+    default:
+      return SEEN_TOASTS_ALL_STORAGE_KEY;
+  }
+};
+
 export const saveSeenToasts = (seenToastIds: Set<string>): void => {
   try {
     const data = {
@@ -112,10 +145,31 @@ export const saveSeenToasts = (seenToastIds: Set<string>): void => {
   }
 };
 
+// Save seen toasts for a specific filter
+export const saveSeenToastsForFilter = (filter: 'all' | 'liked' | 'popular', seenToastIds: Set<string>): void => {
+  const storageKey = getStorageKeyForFilter(filter);
+  try {
+    const data = {
+      seenToastIds: Array.from(seenToastIds),
+      lastUpdated: Date.now()
+    };
+    localStorage.setItem(storageKey, JSON.stringify(data));
+  } catch (error) {
+    console.warn(`Failed to save seen toasts for filter ${filter}:`, error);
+  }
+};
+
 export const markToastAsSeen = (toastId: string): void => {
   const seenToasts = getSeenToasts();
   seenToasts.add(toastId);
   saveSeenToasts(seenToasts);
+};
+
+// Mark toast as seen for a specific filter
+export const markToastAsSeenForFilter = (filter: 'all' | 'liked' | 'popular', toastId: string): void => {
+  const seenToasts = getSeenToastsForFilter(filter);
+  seenToasts.add(toastId);
+  saveSeenToastsForFilter(filter, seenToasts);
 };
 
 export const clearSeenToasts = (): void => {
@@ -126,8 +180,36 @@ export const clearSeenToasts = (): void => {
   }
 };
 
+// Clear seen toasts for a specific filter
+export const clearSeenToastsForFilter = (filter: 'all' | 'liked' | 'popular'): void => {
+  const storageKey = getStorageKeyForFilter(filter);
+  try {
+    localStorage.removeItem(storageKey);
+  } catch (error) {
+    console.warn(`Failed to clear seen toasts for filter ${filter}:`, error);
+  }
+};
+
+// Clear all seen toasts for all filters
+export const clearAllSeenToasts = (): void => {
+  try {
+    localStorage.removeItem(SEEN_TOASTS_STORAGE_KEY);
+    localStorage.removeItem(SEEN_TOASTS_ALL_STORAGE_KEY);
+    localStorage.removeItem(SEEN_TOASTS_LIKED_STORAGE_KEY);
+    localStorage.removeItem(SEEN_TOASTS_POPULAR_STORAGE_KEY);
+  } catch (error) {
+    console.warn('Failed to clear all seen toasts:', error);
+  }
+};
+
 export const getUnseenToasts = (allToastIds: string[]): string[] => {
   const seenToasts = getSeenToasts();
+  return allToastIds.filter(id => !seenToasts.has(id));
+};
+
+// Get unseen toasts for a specific filter
+export const getUnseenToastsForFilter = (filter: 'all' | 'liked' | 'popular', allToastIds: string[]): string[] => {
+  const seenToasts = getSeenToastsForFilter(filter);
   return allToastIds.filter(id => !seenToasts.has(id));
 };
 
@@ -137,6 +219,19 @@ export const resetSeenToastsIfAllSeen = (allToastIds: string[]): boolean => {
   if (unseenToasts.length === 0 && allToastIds.length > 0) {
     // All toasts have been seen, reset the seen list
     clearSeenToasts();
+    return true;
+  }
+  
+  return false;
+};
+
+// Reset seen toasts for a specific filter if all toasts have been seen
+export const resetSeenToastsIfAllSeenForFilter = (filter: 'all' | 'liked' | 'popular', allToastIds: string[]): boolean => {
+  const unseenToasts = getUnseenToastsForFilter(filter, allToastIds);
+  
+  if (unseenToasts.length === 0 && allToastIds.length > 0) {
+    // All toasts have been seen for this filter, reset the seen list
+    clearSeenToastsForFilter(filter);
     return true;
   }
   

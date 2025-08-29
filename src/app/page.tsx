@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { ThumbsUp, ThumbsDown, RotateCcw, Sun, Moon, Plus, X, AlertCircle } from 'lucide-react';
 import { useToasts, ToastFilter } from '@/hooks/useToasts';
-import { getUnseenToasts, getAllLocalVotes } from '@/lib/localVoteStorage';
+import { getUnseenToastsForFilter, getAllLocalVotes } from '@/lib/localVoteStorage';
 
 export default function ToastApp() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -14,9 +14,17 @@ export default function ToastApp() {
   const [newToastText, setNewToastText] = useState('');
   const [newToastCreator, setNewToastCreator] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [renderTrigger, setRenderTrigger] = useState(0);
 
   const { toasts, currentToast, loading, error, currentFilter, loadRandomToast, handleVote, addToast, changeFilter } =
     useToasts();
+
+  // Force re-render when current toast changes (toast was marked as seen)
+  useEffect(() => {
+    if (currentToast) {
+      setRenderTrigger(prev => prev + 1);
+    }
+  }, [currentToast?.id]);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -104,7 +112,7 @@ export default function ToastApp() {
   };
 
   const filteredToastIds = getFilteredToastIds();
-  const unseenToastsCount = getUnseenToasts(filteredToastIds).length;
+  const unseenToastsCount = getUnseenToastsForFilter(currentFilter, filteredToastIds).length;
 
   return (
     <div className="pt-14 pb-14 pl-4 pr-4 flex flex-col w-screen max-w-[600px] h-dvh max-h-[900px] justify-self-center space-y-6">
