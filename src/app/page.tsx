@@ -179,7 +179,7 @@ export default function ToastApp() {
                 {currentToast.likes}
               </Button>
               <Button
-                variant={isDisliked ? 'destructive' : 'outline'}
+                variant={isDisliked ? 'default' : 'outline'}
                 size="lg"
                 onClick={handleDislike}
                 className="flex-1 gap-2">
