@@ -122,8 +122,8 @@ export default function ToastApp() {
         )}
 
         {/* Toast Card */}
-        <Card className="shadow-lg min-h-48 flex items-center justify-center">
-          <CardContent className="p-6">
+        <Card className="shadow-lg mt-16 mb-16  flex items-center justify-center">
+          <CardContent className="h-72 flex flex-col justify-center">
             {loading ? (
               <div className="text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -132,9 +132,6 @@ export default function ToastApp() {
             ) : currentToast ? (
               <div className="space-y-4">
                 <p className="text-lg leading-relaxed text-center text-balance">{currentToast.text}</p>
-                <div className="text-center text-sm text-muted-foreground">
-                  <p>Created by: {currentToast.createdBy}</p>
-                </div>
               </div>
             ) : (
               <div className="text-center space-y-4">
@@ -145,6 +142,11 @@ export default function ToastApp() {
               </div>
             )}
           </CardContent>
+          {currentToast && (
+            <div className="text-center text-sm text-muted-foreground">
+              <p>Created by: {currentToast.createdBy}</p>
+            </div>
+          )}
         </Card>
 
         {/* Add Toast Section */}
