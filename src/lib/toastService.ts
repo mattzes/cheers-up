@@ -13,10 +13,9 @@ import {
   where
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Toast, CreateToastData, UpdateToastVoteData, ToastWithUserVote, VoteRecord } from './types';
+import { Toast, CreateToastData, UpdateToastVoteData, ToastWithUserVote } from './types';
 
 const TOASTS_COLLECTION = 'toasts';
-const VOTES_COLLECTION = 'votes'; // Optional: for audit trail
 
 // Get all toasts
 export const getAllToasts = async (): Promise<Toast[]> => {
@@ -190,40 +189,4 @@ export const updateToastVote = async (voteData: UpdateToastVoteData & { previous
   }
 };
 
-// Get user's vote for a specific toast
-export const getUserVote = async (toastId: string, userId: string): Promise<'like' | 'dislike' | null> => {
-  try {
-    const voteQuery = query(
-      collection(db, VOTES_COLLECTION),
-      where('toastId', '==', toastId),
-      where('userId', '==', userId)
-    );
-    const voteSnapshot = await getDocs(voteQuery);
-    
-    if (!voteSnapshot.empty) {
-      return voteSnapshot.docs[0].data().vote;
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching user vote:', error);
-    throw error;
-  }
-};
 
-// Get toast with user vote
-export const getToastWithUserVote = async (toastId: string, userId: string): Promise<ToastWithUserVote | null> => {
-  try {
-    const toast = await getToastById(toastId);
-    if (!toast) return null;
-    
-    const userVote = await getUserVote(toastId, userId);
-    
-    return {
-      ...toast,
-      userVote,
-    };
-  } catch (error) {
-    console.error('Error fetching toast with user vote:', error);
-    throw error;
-  }
-};

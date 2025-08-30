@@ -6,8 +6,7 @@ import {
   getRandomToastFromIds,
   getToastById,
   createToast, 
-  updateToastVote, 
-  getToastWithUserVote,
+  updateToastVote,
 } from '@/lib/toastService';
 import { 
   getLocalVote, 
