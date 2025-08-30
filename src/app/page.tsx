@@ -178,7 +178,7 @@ export default function ToastApp() {
         /* Add Toast Section */
         <>
           <div className="flex-grow flex items-center justify-center">
-            <Card className="shadow-lg flex items-center justify-center w-full h-full max-h-90">
+            <Card className="shadow-lg flex items-center justify-center w-full h-full max-h-102">
               {showSuccess ? (
                 <div className="text-center p-8">
                   <div className="text-6xl mb-4">✅</div>
