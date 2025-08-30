@@ -79,10 +79,7 @@ export const useToasts = () => {
       
       // Get unseen toast IDs from filtered pool for current filter
       const unseenToastIds = getUnseenToastsForFilter(currentFilter, filteredToastIds);
-      
-      // Check if we need to reset seen toasts (all filtered toasts have been seen for this filter)
-      const wasReset = resetSeenToastsIfAllSeenForFilter(currentFilter, filteredToastIds);
-      
+
       let randomToast: Toast | null;
       
       if (unseenToastIds.length > 0) {

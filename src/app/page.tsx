@@ -25,7 +25,6 @@ export default function ToastApp() {
   const [newToastText, setNewToastText] = useState('');
   const [newToastCreator, setNewToastCreator] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
-  const [renderTrigger, setRenderTrigger] = useState(0);
 
   const { toasts, currentToast, loading, error, currentFilter, loadRandomToast, handleVote, addToast, changeFilter } =
     useToasts();
@@ -39,13 +38,6 @@ export default function ToastApp() {
         console.error('Anonymous sign-in error:', error);
       });
   }, []);
-
-  // Force re-render when current toast changes (toast was marked as seen)
-  useEffect(() => {
-    if (currentToast) {
-      setRenderTrigger(prev => prev + 1);
-    }
-  }, [currentToast?.id]);
 
   useEffect(() => {
     if (isDarkMode) {

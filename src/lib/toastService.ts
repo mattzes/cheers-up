@@ -5,15 +5,13 @@ import {
   getDoc, 
   addDoc, 
   updateDoc, 
-  deleteDoc, 
   query, 
   orderBy, 
   increment,
   serverTimestamp,
-  where
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Toast, CreateToastData, UpdateToastVoteData, ToastWithUserVote } from './types';
+import { Toast, CreateToastData, UpdateToastVoteData } from './types';
 
 const TOASTS_COLLECTION = 'toasts';
 

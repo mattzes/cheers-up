@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Pointer, X } from 'lucide-react';
+import { Pointer } from 'lucide-react';
 
 const FIRST_TIME_KEY = 'cheers-up-first-time';
 
