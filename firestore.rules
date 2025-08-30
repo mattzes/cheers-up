@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Toasts collection rules
+    match /toasts/{toastId} {
+      // Anyone can read toasts
+      allow read: if true;
+      
+      // Create new toasts
+      allow create: if 
+        // Text must be provided and not empty
+        request.resource.data.text is string &&
+        request.resource.data.text.size() > 0 &&
+        request.resource.data.text.size() <= 300 &&
+        
+        // createdBy cannot be "system" (prevents users from creating protected toasts)
+        request.resource.data.createdBy != "system" &&
+        
+        // createdBy must be a string if provided
+        (request.resource.data.createdBy == null || 
+         (request.resource.data.createdBy is string && 
+          request.resource.data.createdBy.size() <= 30)) &&
+        
+        // Likes and dislikes must start at 0
+        request.resource.data.likes == 0 &&
+        request.resource.data.dislikes == 0 &&
+        
+        // Timestamps must be present
+        request.resource.data.createdAt is timestamp &&
+        request.resource.data.updatedAt is timestamp;
+      
+      // Update toasts (for vote counts)
+      allow update: if 
+        // Only allow updating specific fields for vote counts
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['likes', 'dislikes', 'voteSummary', 'updatedAt']) &&
+        
+        // Text and createdBy cannot be changed
+        request.resource.data.text == resource.data.text &&
+        request.resource.data.createdBy == resource.data.createdBy &&
+        
+        // Likes and dislikes must be non-negative integers
+        request.resource.data.likes is int &&
+        request.resource.data.likes >= 0 &&
+        request.resource.data.dislikes is int &&
+        request.resource.data.dislikes >= 0 &&
+        
+        // Vote summary must be valid if present
+        (request.resource.data.voteSummary == null ||
+         (request.resource.data.voteSummary is map &&
+          (request.resource.data.voteSummary.totalVotes == null ||
+           (request.resource.data.voteSummary.totalVotes is int &&
+            request.resource.data.voteSummary.totalVotes >= 0)))) &&
+        
+        // Updated timestamp must be present
+        request.resource.data.updatedAt is timestamp;
+      
+      // Delete toasts - only if NOT created by "system"
+      allow delete: if resource.data.createdBy != "system";
+    }
+  }
+}
