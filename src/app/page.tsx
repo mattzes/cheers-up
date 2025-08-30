@@ -26,8 +26,18 @@ export default function ToastApp() {
   const [newToastCreator, setNewToastCreator] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { toasts, currentToast, loading, error, currentFilter, loadRandomToast, handleVote, addToast, changeFilter } =
-    useToasts();
+  const {
+    toasts,
+    currentToast,
+    loading,
+    error,
+    currentFilter,
+    loadRandomToast,
+    loadNextRandomToast,
+    handleVote,
+    addToast,
+    changeFilter,
+  } = useToasts();
 
   useEffect(() => {
     signInAnonymously(auth)
@@ -79,7 +89,7 @@ export default function ToastApp() {
   };
 
   const handleNextToast = () => {
-    loadRandomToast();
+    loadNextRandomToast();
   };
 
   const toggleDarkMode = () => {
@@ -127,7 +137,7 @@ export default function ToastApp() {
   };
 
   const filteredToastIds = getFilteredToastIds();
-  const unseenToastsCount = getUnseenToastsForFilter(currentFilter, filteredToastIds).length;
+  const unseenToastsCount = getUnseenToastsForFilter(currentFilter, filteredToastIds).length - 1;
 
   return (
     <div className="pt-14 pb-14 pl-4 pr-4 flex flex-col w-screen max-w-[600px] h-dvh max-h-[900px] justify-self-center space-y-6">
@@ -147,11 +157,7 @@ export default function ToastApp() {
           <p className="text-muted-foreground mt-2">
             {toasts.length > 0 ? `${filteredToastIds.length} Trinksprüche verfügbar` : 'Keine Trinksprüche verfügbar'}
           </p>
-          {toasts.length > 0 && (
-            <p className="text-xs text-muted-foreground">
-              {unseenToastsCount > 0 ? `${unseenToastsCount} ungesehen` : "Alle gesehen - weiter geht's!"}
-            </p>
-          )}
+          {toasts.length > 0 && <p className="text-xs text-muted-foreground">{`${unseenToastsCount} ungesehen`}</p>}
         </div>
         {/* Dark mode toggle button */}
         <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="w-10 h-10" aria-label="Toggle dark mode">

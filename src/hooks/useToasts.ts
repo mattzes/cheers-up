@@ -25,6 +25,7 @@ export const useToasts = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentFilter, setCurrentFilter] = useState<ToastFilter>('all');
   const [localVotesVersion, setLocalVotesVersion] = useState(0);
+  const [seenToastsResetVersion, setSeenToastsResetVersion] = useState(0);
 
   // Load all toasts
   const loadToasts = useCallback(async () => {
@@ -62,8 +63,8 @@ export const useToasts = () => {
     }
   }, [currentFilter]);
 
-  // Load random toast with unseen logic and filtering
-  const loadRandomToast = useCallback(async () => {
+  // Internal function to load random toast (without marking as seen)
+  const loadRandomToastInternal = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -78,7 +79,14 @@ export const useToasts = () => {
       }
       
       // Get unseen toast IDs from filtered pool for current filter
-      const unseenToastIds = getUnseenToastsForFilter(currentFilter, filteredToastIds);
+      let unseenToastIds = getUnseenToastsForFilter(currentFilter, filteredToastIds);
+
+      // If all toasts have been seen, reset the seen list for this filter
+      if (unseenToastIds.length === 0 && filteredToastIds.length > 0) {
+        resetSeenToastsIfAllSeenForFilter(currentFilter, filteredToastIds);
+        unseenToastIds = getUnseenToastsForFilter(currentFilter, filteredToastIds);
+        setSeenToastsResetVersion(prev => prev + 1);
+      }
 
       let randomToast: Toast | null;
       
@@ -86,16 +94,13 @@ export const useToasts = () => {
         // Get random toast from unseen filtered pool
         randomToast = await getRandomToastFromIds(unseenToastIds);
       } else {
-        // Fallback to any random toast from filtered pool
+        // Fallback to any random toast from filtered pool (should not happen after reset)
         const randomIndex = Math.floor(Math.random() * filteredToastIds.length);
         const randomToastId = filteredToastIds[randomIndex];
         randomToast = await getToastById(randomToastId);
       }
       
       if (randomToast) {
-        // Mark this toast as seen for the current filter
-        markToastAsSeenForFilter(currentFilter, randomToast.id);
-        
         // Get local vote for this toast
         const localVote = getLocalVote(randomToast.id);
         
@@ -114,7 +119,23 @@ export const useToasts = () => {
     } finally {
       setLoading(false);
     }
-  }, [toasts, currentFilter, getFilteredToastIds]);
+  }, [toasts, currentFilter, getFilteredToastIds, seenToastsResetVersion]);
+
+  // Mark current toast as seen and load next random toast
+  const loadNextRandomToast = useCallback(async () => {
+    // Mark current toast as seen before loading next one
+    if (currentToast) {
+      markToastAsSeenForFilter(currentFilter, currentToast.id);
+    }
+    
+    // Call the internal loadRandomToast logic directly
+    await loadRandomToastInternal();
+  }, [currentToast, currentFilter, loadRandomToastInternal]);
+
+  // Load random toast with unseen logic and filtering (public API)
+  const loadRandomToast = useCallback(async () => {
+    await loadRandomToastInternal();
+  }, [loadRandomToastInternal]);
 
   // Handle like/dislike with local storage
   const handleVote = useCallback(async (toastId: string, vote: 'like' | 'dislike' | null) => {
@@ -197,9 +218,9 @@ export const useToasts = () => {
   // Reload toast when filter changes
   useEffect(() => {
     if (toasts.length > 0) {
-      loadRandomToast();
+      loadRandomToastInternal();
     }
-  }, [currentFilter, localVotesVersion, loadRandomToast]);
+  }, [currentFilter, localVotesVersion, seenToastsResetVersion, loadRandomToastInternal]);
 
   return {
     toasts,
@@ -209,6 +230,7 @@ export const useToasts = () => {
     currentFilter,
     loadToasts,
     loadRandomToast,
+    loadNextRandomToast,
     handleVote,
     addToast,
     changeFilter,
