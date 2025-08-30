@@ -104,7 +104,7 @@ export const getSeenToasts = (): Set<string> => {
 };
 
 // Get seen toasts for a specific filter
-export const getSeenToastsForFilter = (filter: 'all' | 'liked' | 'popular'): Set<string> => {
+export const getSeenToastsForFilter = (filter: 'all' | 'liked' | 'top25'): Set<string> => {
   const storageKey = getStorageKeyForFilter(filter);
   try {
     const stored = localStorage.getItem(storageKey);
@@ -120,13 +120,13 @@ export const getSeenToastsForFilter = (filter: 'all' | 'liked' | 'popular'): Set
 };
 
 // Get storage key for a specific filter
-const getStorageKeyForFilter = (filter: 'all' | 'liked' | 'popular'): string => {
+const getStorageKeyForFilter = (filter: 'all' | 'liked' | 'top25'): string => {
   switch (filter) {
     case 'all':
       return SEEN_TOASTS_ALL_STORAGE_KEY;
     case 'liked':
       return SEEN_TOASTS_LIKED_STORAGE_KEY;
-    case 'popular':
+    case 'top25':
       return SEEN_TOASTS_POPULAR_STORAGE_KEY;
     default:
       return SEEN_TOASTS_ALL_STORAGE_KEY;
@@ -146,7 +146,7 @@ export const saveSeenToasts = (seenToastIds: Set<string>): void => {
 };
 
 // Save seen toasts for a specific filter
-export const saveSeenToastsForFilter = (filter: 'all' | 'liked' | 'popular', seenToastIds: Set<string>): void => {
+export const saveSeenToastsForFilter = (filter: 'all' | 'liked' | 'top25', seenToastIds: Set<string>): void => {
   const storageKey = getStorageKeyForFilter(filter);
   try {
     const data = {
@@ -166,7 +166,7 @@ export const markToastAsSeen = (toastId: string): void => {
 };
 
 // Mark toast as seen for a specific filter
-export const markToastAsSeenForFilter = (filter: 'all' | 'liked' | 'popular', toastId: string): void => {
+export const markToastAsSeenForFilter = (filter: 'all' | 'liked' | 'top25', toastId: string): void => {
   const seenToasts = getSeenToastsForFilter(filter);
   seenToasts.add(toastId);
   saveSeenToastsForFilter(filter, seenToasts);
@@ -181,7 +181,7 @@ export const clearSeenToasts = (): void => {
 };
 
 // Clear seen toasts for a specific filter
-export const clearSeenToastsForFilter = (filter: 'all' | 'liked' | 'popular'): void => {
+export const clearSeenToastsForFilter = (filter: 'all' | 'liked' | 'top25'): void => {
   const storageKey = getStorageKeyForFilter(filter);
   try {
     localStorage.removeItem(storageKey);
@@ -208,7 +208,7 @@ export const getUnseenToasts = (allToastIds: string[]): string[] => {
 };
 
 // Get unseen toasts for a specific filter
-export const getUnseenToastsForFilter = (filter: 'all' | 'liked' | 'popular', allToastIds: string[]): string[] => {
+export const getUnseenToastsForFilter = (filter: 'all' | 'liked' | 'top25', allToastIds: string[]): string[] => {
   const seenToasts = getSeenToastsForFilter(filter);
   return allToastIds.filter(id => !seenToasts.has(id));
 };
@@ -226,7 +226,7 @@ export const resetSeenToastsIfAllSeen = (allToastIds: string[]): boolean => {
 };
 
 // Reset seen toasts for a specific filter if all toasts have been seen
-export const resetSeenToastsIfAllSeenForFilter = (filter: 'all' | 'liked' | 'popular', allToastIds: string[]): boolean => {
+export const resetSeenToastsIfAllSeenForFilter = (filter: 'all' | 'liked' | 'top25', allToastIds: string[]): boolean => {
   const unseenToasts = getUnseenToastsForFilter(filter, allToastIds);
   
   if (unseenToasts.length === 0 && allToastIds.length > 0) {

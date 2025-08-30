@@ -18,7 +18,7 @@ import {
   getAllLocalVotes
 } from '@/lib/localVoteStorage';
 
-export type ToastFilter = 'all' | 'liked' | 'popular';
+export type ToastFilter = 'all' | 'liked' | 'top25';
 
 export const useToasts = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -50,11 +50,12 @@ export const useToasts = () => {
           .filter(toast => localVotes[toast.id]?.vote === 'like')
           .map(toast => toast.id);
       
-      case 'popular':
-        // Sort by likes (descending) and take top 50%
+      case 'top25':
+        // Sort by likes (descending) and take top 25, or all with at least 1 like if less than 25
         const sortedByLikes = [...allToasts].sort((a, b) => b.likes - a.likes);
-        const topHalf = sortedByLikes.slice(0, Math.ceil(sortedByLikes.length / 2));
-        return topHalf.map(toast => toast.id);
+        const toastsWithLikes = sortedByLikes.filter(toast => toast.likes > 0);
+        const top25 = toastsWithLikes.slice(0, 25);
+        return top25.map(toast => toast.id);
       
       case 'all':
       default:
