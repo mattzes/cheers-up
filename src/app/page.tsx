@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { ThumbsUp, ThumbsDown, RotateCcw, Sun, Moon, Plus, X, AlertCircle } from 'lucide-react';
-import { useToasts, ToastFilter } from '@/hooks/useToasts';
+import { ThumbsUp, ThumbsDown, Sun, Moon, Plus, X, AlertCircle } from 'lucide-react';
+import { useToasts } from '@/hooks/useToasts';
 import { getUnseenToastsForFilter, getAllLocalVotes } from '@/lib/localVoteStorage';
 
 export default function ToastApp() {

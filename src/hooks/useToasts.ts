@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { Toast, ToastWithUserVote } from '@/lib/types';
 import { 
   getAllToasts, 
-  getRandomToast, 
   getRandomToastFromIds,
   getToastById,
   createToast, 

@@ -57,32 +57,6 @@ export const getToastById = async (id: string): Promise<Toast | null> => {
   }
 };
 
-// Get a random toast
-export const getRandomToast = async (): Promise<Toast | null> => {
-  try {
-    // Get all toasts first, then select random one
-    const q = query(collection(db, TOASTS_COLLECTION));
-    const querySnapshot = await getDocs(q);
-    
-    if (!querySnapshot.empty) {
-      const randomIndex = Math.floor(Math.random() * querySnapshot.docs.length);
-      const doc = querySnapshot.docs[randomIndex];
-      const data = doc.data();
-      
-      return {
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt?.toDate() || new Date(),
-        updatedAt: data.updatedAt?.toDate() || new Date(),
-      } as Toast;
-    }
-    return null;
-  } catch (error) {
-    console.error('Error fetching random toast:', error);
-    throw error;
-  }
-};
-
 // Get a random toast from a specific list of toast IDs
 export const getRandomToastFromIds = async (toastIds: string[]): Promise<Toast | null> => {
   try {
