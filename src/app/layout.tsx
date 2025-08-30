@@ -1,31 +1,23 @@
-'use client';
-
+import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { signInAnonymously } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { useEffect } from 'react';
 const inter = Inter({ subsets: ['latin'] });
 
-signInAnonymously(auth)
-  .then(() => {
-    console.log('Signed in anonymously');
-  })
-  .catch(error => {
-    console.error('Anonymous sign-in error:', error);
-  });
+export const metadata: Metadata = {
+  title: 'Cheers Up',
+  description: 'Jederzeit einen neuen Trinkspruch',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Cheers Up',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    signInAnonymously(auth)
-      .then(() => {
-        console.log('Signed in anonymously');
-      })
-      .catch(error => {
-        console.error('Anonymous sign-in error:', error);
-      });
-  }, []);
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

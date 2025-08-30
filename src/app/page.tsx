@@ -7,6 +7,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { ThumbsUp, ThumbsDown, Sun, Moon, Plus, X, AlertCircle } from 'lucide-react';
 import { useToasts } from '@/hooks/useToasts';
 import { getUnseenToastsForFilter, getAllLocalVotes } from '@/lib/localVoteStorage';
+import { signInAnonymously } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+
+signInAnonymously(auth)
+  .then(() => {
+    console.log('Signed in anonymously');
+  })
+  .catch(error => {
+    console.error('Anonymous sign-in error:', error);
+  });
 
 export default function ToastApp() {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -18,6 +28,16 @@ export default function ToastApp() {
 
   const { toasts, currentToast, loading, error, currentFilter, loadRandomToast, handleVote, addToast, changeFilter } =
     useToasts();
+
+  useEffect(() => {
+    signInAnonymously(auth)
+      .then(() => {
+        console.log('Signed in anonymously');
+      })
+      .catch(error => {
+        console.error('Anonymous sign-in error:', error);
+      });
+  }, []);
 
   // Force re-render when current toast changes (toast was marked as seen)
   useEffect(() => {
