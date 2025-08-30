@@ -1,17 +1,13 @@
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import Script from 'next/script';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Cheers Up',
   description: 'Jederzeit einen neuen Trinkspruch',
   manifest: '/manifest.json',
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'Cheers Up',
-  },
   formatDetection: {
     telephone: false,
   },
@@ -26,6 +22,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={inter.className} suppressHydrationWarning>
         {children}
+
+        {/* Service Worker Registration */}
+        <Script src="/sw-register.js" strategy="afterInteractive" />
       </body>
     </html>
   );
