@@ -134,7 +134,7 @@ export const updateToastVote = async (voteData: UpdateToastVoteData & { previous
     }
     
     // Update the document with calculated changes
-    const updateData: any = {
+    const updateData: Record<string, any> = {
       'updatedAt': serverTimestamp(),
     };
     
