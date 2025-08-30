@@ -5,6 +5,15 @@ const SEEN_TOASTS_ALL_STORAGE_KEY = 'cheers-up-seen-toasts-all';
 const SEEN_TOASTS_LIKED_STORAGE_KEY = 'cheers-up-seen-toasts-liked';
 const SEEN_TOASTS_POPULAR_STORAGE_KEY = 'cheers-up-seen-toasts-popular';
 
+// Helper function to safely check if localStorage is available
+const isLocalStorageAvailable = (): boolean => {
+  try {
+    return typeof window !== 'undefined' && window.localStorage !== undefined;
+  } catch {
+    return false;
+  }
+};
+
 export interface LocalVote {
   toastId: string;
   vote: 'like' | 'dislike';
@@ -23,6 +32,13 @@ export interface SeenToastsStorage {
 
 // Get votes from localStorage
 export const getLocalVotes = (): LocalVoteStorage => {
+  if (!isLocalStorageAvailable()) {
+    return {
+      votes: {},
+      lastUpdated: Date.now()
+    };
+  }
+  
   try {
     const stored = localStorage.getItem(VOTES_STORAGE_KEY);
     if (stored) {
@@ -40,6 +56,10 @@ export const getLocalVotes = (): LocalVoteStorage => {
 
 // Save votes to localStorage
 export const saveLocalVotes = (votes: LocalVoteStorage): void => {
+  if (!isLocalStorageAvailable()) {
+    return;
+  }
+  
   try {
     localStorage.setItem(VOTES_STORAGE_KEY, JSON.stringify(votes));
   } catch (error) {
@@ -81,6 +101,10 @@ export const getAllLocalVotes = (): Record<string, LocalVote> => {
 
 // Clear all local votes (for testing/debugging)
 export const clearLocalVotes = (): void => {
+  if (!isLocalStorageAvailable()) {
+    return;
+  }
+  
   try {
     localStorage.removeItem(VOTES_STORAGE_KEY);
   } catch (error) {
@@ -90,6 +114,10 @@ export const clearLocalVotes = (): void => {
 
 // Seen toasts management - Legacy function for backward compatibility
 export const getSeenToasts = (): Set<string> => {
+  if (!isLocalStorageAvailable()) {
+    return new Set<string>();
+  }
+  
   try {
     const stored = localStorage.getItem(SEEN_TOASTS_STORAGE_KEY);
     if (stored) {
@@ -105,6 +133,10 @@ export const getSeenToasts = (): Set<string> => {
 
 // Get seen toasts for a specific filter
 export const getSeenToastsForFilter = (filter: 'all' | 'liked' | 'top25'): Set<string> => {
+  if (!isLocalStorageAvailable()) {
+    return new Set<string>();
+  }
+  
   const storageKey = getStorageKeyForFilter(filter);
   try {
     const stored = localStorage.getItem(storageKey);
@@ -134,6 +166,10 @@ const getStorageKeyForFilter = (filter: 'all' | 'liked' | 'top25'): string => {
 };
 
 export const saveSeenToasts = (seenToastIds: Set<string>): void => {
+  if (!isLocalStorageAvailable()) {
+    return;
+  }
+  
   try {
     const data = {
       seenToastIds: Array.from(seenToastIds),
@@ -147,6 +183,10 @@ export const saveSeenToasts = (seenToastIds: Set<string>): void => {
 
 // Save seen toasts for a specific filter
 export const saveSeenToastsForFilter = (filter: 'all' | 'liked' | 'top25', seenToastIds: Set<string>): void => {
+  if (!isLocalStorageAvailable()) {
+    return;
+  }
+  
   const storageKey = getStorageKeyForFilter(filter);
   try {
     const data = {
@@ -173,6 +213,10 @@ export const markToastAsSeenForFilter = (filter: 'all' | 'liked' | 'top25', toas
 };
 
 export const clearSeenToasts = (): void => {
+  if (!isLocalStorageAvailable()) {
+    return;
+  }
+  
   try {
     localStorage.removeItem(SEEN_TOASTS_STORAGE_KEY);
   } catch (error) {
@@ -182,6 +226,10 @@ export const clearSeenToasts = (): void => {
 
 // Clear seen toasts for a specific filter
 export const clearSeenToastsForFilter = (filter: 'all' | 'liked' | 'top25'): void => {
+  if (!isLocalStorageAvailable()) {
+    return;
+  }
+  
   const storageKey = getStorageKeyForFilter(filter);
   try {
     localStorage.removeItem(storageKey);
@@ -192,6 +240,10 @@ export const clearSeenToastsForFilter = (filter: 'all' | 'liked' | 'top25'): voi
 
 // Clear all seen toasts for all filters
 export const clearAllSeenToasts = (): void => {
+  if (!isLocalStorageAvailable()) {
+    return;
+  }
+  
   try {
     localStorage.removeItem(SEEN_TOASTS_STORAGE_KEY);
     localStorage.removeItem(SEEN_TOASTS_ALL_STORAGE_KEY);
