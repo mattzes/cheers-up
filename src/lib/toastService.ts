@@ -134,27 +134,13 @@ export const updateToastVote = async (voteData: UpdateToastVoteData & { previous
     }
     
     // Update the document with calculated changes
-    const updateData: Record<string, any> = {
+    await updateDoc(toastRef, {
       'updatedAt': serverTimestamp(),
-    };
-    
-    if (likesChange !== 0) {
-      updateData['likes'] = increment(likesChange);
-    }
-    
-    if (dislikesChange !== 0) {
-      updateData['dislikes'] = increment(dislikesChange);
-    }
-    
-    if (totalVotesChange !== 0) {
-      updateData['voteSummary.totalVotes'] = increment(totalVotesChange);
-    }
-    
-    if (vote !== null) {
-      updateData['voteSummary.lastVoteAt'] = serverTimestamp();
-    }
-    
-    await updateDoc(toastRef, updateData);
+      ...(likesChange !== 0 && { 'likes': increment(likesChange) }),
+      ...(dislikesChange !== 0 && { 'dislikes': increment(dislikesChange) }),
+      ...(totalVotesChange !== 0 && { 'voteSummary.totalVotes': increment(totalVotesChange) }),
+      ...(vote !== null && { 'voteSummary.lastVoteAt': serverTimestamp() }),
+    });
   } catch (error) {
     console.error('Error updating toast vote:', error);
     throw error;
