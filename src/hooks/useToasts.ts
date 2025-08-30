@@ -24,6 +24,7 @@ export const useToasts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentFilter, setCurrentFilter] = useState<ToastFilter>('all');
+  const [localVotesVersion, setLocalVotesVersion] = useState(0);
 
   // Load all toasts
   const loadToasts = useCallback(async () => {
@@ -146,6 +147,8 @@ export const useToasts = () => {
         };
         setCurrentToast(updatedToast);
       }
+      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update vote');
     }
@@ -167,6 +170,11 @@ export const useToasts = () => {
   // Change filter
   const changeFilter = useCallback((newFilter: ToastFilter) => {
     setCurrentFilter(newFilter);
+    
+    // If switching to liked filter, reload toasts to get fresh data
+    if (newFilter === 'liked') {
+      setLocalVotesVersion(prev => prev + 1);
+    }
   }, []);
 
   // Load initial data
@@ -174,12 +182,19 @@ export const useToasts = () => {
     loadToasts();
   }, [loadToasts]);
 
+  // Reload toasts when local votes change (for liked filter)
+  useEffect(() => {
+    if (localVotesVersion > 0) {
+      loadToasts();
+    }
+  }, [localVotesVersion, loadToasts]);
+
   // Reload toast when filter changes
   useEffect(() => {
     if (toasts.length > 0) {
       loadRandomToast();
     }
-  }, [currentFilter, loadRandomToast]);
+  }, [currentFilter, localVotesVersion, loadRandomToast]);
 
   return {
     toasts,
