@@ -153,11 +153,11 @@ export default function ToastApp() {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Cheers Up 🍻</h1>
           <p className="text-muted-foreground mt-2">
-            {toasts.length > 0 ? `${filteredToastIds.length} toasts available` : 'No toasts available'}
+            {toasts.length > 0 ? `${filteredToastIds.length} Trinksprüche verfügbar` : 'Keine Trinksprüche verfügbar'}
           </p>
           {toasts.length > 0 && (
             <p className="text-xs text-muted-foreground">
-              {unseenToastsCount > 0 ? `${unseenToastsCount} unseen` : 'All seen - starting over!'}
+              {unseenToastsCount > 0 ? `${unseenToastsCount} ungesehen` : "Alle gesehen - weiter geht's!"}
             </p>
           )}
         </div>
@@ -183,17 +183,17 @@ export default function ToastApp() {
               {showSuccess ? (
                 <div className="text-center p-8">
                   <div className="text-6xl mb-4">✅</div>
-                  <h3 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">Success!</h3>
-                  <p className="text-muted-foreground">Toast added successfully</p>
+                  <h3 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">Erfolgreich!</h3>
+                  <p className="text-muted-foreground">Trinkspruch hinzugefügt</p>
                 </div>
               ) : (
                 <>
-                  <h3 className="text-lg font-semibold text-center">Add New Toast</h3>
+                  <h3 className="text-lg font-semibold text-center">Neuen Trinkspruch hinzufügen</h3>
                   <CardContent className="flex flex-grow w-full flex-col justify-center">
                     <Textarea
                       value={newToastText}
                       onChange={e => setNewToastText(e.target.value)}
-                      placeholder="Enter your toast text..."
+                      placeholder="Trinkspruch eingeben..."
                       className="resize-none bg-transparent text-center text-lg h-full"
                       maxLength={300}
                       aria-label="Toast text input"
@@ -202,7 +202,7 @@ export default function ToastApp() {
                       type="text"
                       value={newToastCreator}
                       onChange={e => setNewToastCreator(e.target.value)}
-                      placeholder="Your name (optional)"
+                      placeholder="Dein Name (optional)"
                       className="mt-4 mb-2 px-3 py-2 border rounded-md w-full text-center bg-transparent text-base"
                       maxLength={30}
                       aria-label="Creator name input"
@@ -217,7 +217,7 @@ export default function ToastApp() {
           <div className="space-y-4">
             <div className="flex gap-4 justify-center">
               <Button variant="outline" size="lg" onClick={() => setShowAddToast(false)} className="flex-1 gap-2">
-                Cancel
+                Abbrechen
               </Button>
               <Button
                 onClick={handleAddToast}
@@ -225,7 +225,7 @@ export default function ToastApp() {
                 variant="default"
                 size="lg"
                 className="flex-1 gap-2">
-                Add Toast
+                Hinzufügen
               </Button>
             </div>
           </div>
@@ -240,7 +240,7 @@ export default function ToastApp() {
               size="sm"
               onClick={() => changeFilter('all')}
               className="flex-1">
-              All
+              Alle
             </Button>
             <Button
               variant={currentFilter === 'liked' ? 'default' : 'outline'}
@@ -274,7 +274,7 @@ export default function ToastApp() {
               </CardContent>
               {loading || !currentToast ? null : (
                 <div className="text-center text-sm text-muted-foreground">
-                  <p>Created by: {currentToast.createdBy}</p>
+                  <p>Erstellt von: {currentToast.createdBy}</p>
                 </div>
               )}
             </Card>
