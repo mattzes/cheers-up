@@ -9,6 +9,7 @@ import { useToasts } from '@/hooks/useToasts';
 import { getUnseenToastsForFilter, getAllLocalVotes } from '@/lib/localVoteStorage';
 import { signInAnonymously } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import FirstTimeOverlay from '@/components/FirstTimeOverlay';
 
 signInAnonymously(auth)
   .then(() => {
@@ -301,6 +302,9 @@ export default function ToastApp() {
           </div>
         </>
       )}
+
+      {/* First Time User Overlay */}
+      <FirstTimeOverlay />
     </div>
   );
 }
