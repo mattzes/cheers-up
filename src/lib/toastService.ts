@@ -132,35 +132,58 @@ export const createToast = async (toastData: CreateToastData): Promise<Toast> =>
   }
 };
 
-// Update toast vote (Simplified - only counts, no individual user tracking)
-export const updateToastVote = async (voteData: UpdateToastVoteData): Promise<void> => {
+// Update toast vote with previous vote consideration
+export const updateToastVote = async (voteData: UpdateToastVoteData & { previousVote?: 'like' | 'dislike' | null }): Promise<void> => {
   try {
-    const { toastId, vote } = voteData;
+    const { toastId, vote, previousVote } = voteData;
     
     const toastRef = doc(db, TOASTS_COLLECTION, toastId);
     
-    // Simple increment/decrement based on vote
-    if (vote === 'like') {
-      await updateDoc(toastRef, {
-        'likes': increment(1),
-        'voteSummary.totalVotes': increment(1),
-        'voteSummary.lastVoteAt': serverTimestamp(),
-        'updatedAt': serverTimestamp(),
-      });
-    } else if (vote === 'dislike') {
-      await updateDoc(toastRef, {
-        'dislikes': increment(1),
-        'voteSummary.totalVotes': increment(1),
-        'voteSummary.lastVoteAt': serverTimestamp(),
-        'updatedAt': serverTimestamp(),
-      });
-    } else if (vote === null) {
-      // This case is handled by the frontend logic
-      // We don't need to decrement here since we don't track individual votes
-      await updateDoc(toastRef, {
-        'updatedAt': serverTimestamp(),
-      });
+    // Calculate the changes based on previous and new vote
+    let likesChange = 0;
+    let dislikesChange = 0;
+    let totalVotesChange = 0;
+    
+    // Remove previous vote if it exists
+    if (previousVote === 'like') {
+      likesChange -= 1;
+      totalVotesChange -= 1;
+    } else if (previousVote === 'dislike') {
+      dislikesChange -= 1;
+      totalVotesChange -= 1;
     }
+    
+    // Add new vote if it exists
+    if (vote === 'like') {
+      likesChange += 1;
+      totalVotesChange += 1;
+    } else if (vote === 'dislike') {
+      dislikesChange += 1;
+      totalVotesChange += 1;
+    }
+    
+    // Update the document with calculated changes
+    const updateData: any = {
+      'updatedAt': serverTimestamp(),
+    };
+    
+    if (likesChange !== 0) {
+      updateData['likes'] = increment(likesChange);
+    }
+    
+    if (dislikesChange !== 0) {
+      updateData['dislikes'] = increment(dislikesChange);
+    }
+    
+    if (totalVotesChange !== 0) {
+      updateData['voteSummary.totalVotes'] = increment(totalVotesChange);
+    }
+    
+    if (vote !== null) {
+      updateData['voteSummary.lastVoteAt'] = serverTimestamp();
+    }
+    
+    await updateDoc(toastRef, updateData);
   } catch (error) {
     console.error('Error updating toast vote:', error);
     throw error;

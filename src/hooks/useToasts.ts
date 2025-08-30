@@ -125,11 +125,14 @@ export const useToasts = () => {
     try {
       setError(null);
       
+      // Get the previous vote before updating
+      const previousVote = getLocalVote(toastId);
+      
       // Update local storage first
       setLocalVote(toastId, vote);
       
-      // Update Firebase vote counts (without user tracking)
-      await updateToastVote({ toastId, vote });
+      // Update Firebase vote counts with previous vote consideration
+      await updateToastVote({ toastId, vote, previousVote });
       
       // Update current toast if it's the one being voted on
       if (currentToast && currentToast.id === toastId) {
