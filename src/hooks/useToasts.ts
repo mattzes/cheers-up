@@ -148,6 +148,14 @@ export const useToasts = () => {
         setCurrentToast(updatedToast);
       }
       
+      // Reload toasts if we're in a filter that depends on vote counts
+      if (currentFilter === 'liked' || currentFilter === 'top25') {
+        // Use setTimeout to avoid blocking the UI update
+        setTimeout(() => {
+          setLocalVotesVersion(prev => prev + 1);
+        }, 100);
+      }
+      
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update vote');
@@ -171,8 +179,8 @@ export const useToasts = () => {
   const changeFilter = useCallback((newFilter: ToastFilter) => {
     setCurrentFilter(newFilter);
     
-    // If switching to liked filter, reload toasts to get fresh data
-    if (newFilter === 'liked') {
+    // If switching to liked or top25 filter, reload toasts to get fresh data
+    if (newFilter === 'liked' || newFilter === 'top25') {
       setLocalVotesVersion(prev => prev + 1);
     }
   }, []);
