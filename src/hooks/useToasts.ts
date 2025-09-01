@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Toast, ToastWithUserVote } from '@/lib/types';
 import { 
   getAllToasts, 
@@ -26,6 +26,7 @@ export const useToasts = () => {
   const [currentFilter, setCurrentFilter] = useState<ToastFilter>('all');
   const [localVotesVersion, setLocalVotesVersion] = useState(0);
   const [seenToastsResetVersion, setSeenToastsResetVersion] = useState(0);
+  const isLoadingRandomToastRef = useRef(false);
 
   // Load all toasts
   const loadToasts = useCallback(async () => {
@@ -65,7 +66,14 @@ export const useToasts = () => {
 
   // Internal function to load random toast (without marking as seen)
   const loadRandomToastInternal = useCallback(async () => {
+    // Prevent multiple simultaneous calls
+    if (isLoadingRandomToastRef.current) {
+      console.log('Already loading random toast, skipping');
+      return;
+    }
+    
     try {
+      isLoadingRandomToastRef.current = true;
       setLoading(true);
       setError(null);
       
@@ -121,6 +129,7 @@ export const useToasts = () => {
       setError(err instanceof Error ? err.message : 'Failed to load random toast');
     } finally {
       setLoading(false);
+      isLoadingRandomToastRef.current = false;
     }
   }, [toasts, currentFilter, getFilteredToastIds, seenToastsResetVersion]);
 
@@ -215,7 +224,8 @@ export const useToasts = () => {
 
   // Reload toast when filter changes
   useEffect(() => {
-    if (toasts.length > 0) {
+    if (toasts.length > 0 && currentFilter !== 'all') {
+      // Only reload when filter changes to non-default filters
       loadRandomToastInternal();
     }
   }, [currentFilter, localVotesVersion, seenToastsResetVersion, loadRandomToastInternal]);

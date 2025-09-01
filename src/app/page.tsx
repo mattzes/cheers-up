@@ -69,10 +69,12 @@ export default function ToastApp() {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Load random toast on mount
+  // Load random toast on mount after toasts are loaded
   useEffect(() => {
-    loadRandomToast();
-  }, [loadRandomToast]);
+    if (toasts.length > 0 && !currentToast) {
+      loadRandomToast();
+    }
+  }, [toasts.length, currentToast, loadRandomToast]);
 
   const handleLike = () => {
     if (currentToast) {
