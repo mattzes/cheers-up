@@ -10,6 +10,7 @@ import { getUnseenToastsForFilter, getAllLocalVotes } from '@/lib/localVoteStora
 import { signInAnonymously } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import FirstTimeOverlay from '@/components/FirstTimeOverlay';
+import PWAInstallOverlay from '@/components/PWAInstallOverlay';
 
 signInAnonymously(auth)
   .then(() => {
@@ -323,6 +324,9 @@ export default function ToastApp() {
 
       {/* First Time User Overlay */}
       <FirstTimeOverlay />
+
+      {/* PWA Install Overlay */}
+      <PWAInstallOverlay />
     </div>
   );
 }
