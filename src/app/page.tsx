@@ -137,7 +137,7 @@ export default function ToastApp() {
   };
 
   const filteredToastIds = getFilteredToastIds();
-  const unseenToastsCount = getUnseenToastsForFilter(currentFilter, filteredToastIds).length - 1;
+  const unseenToastsCount = getUnseenToastsForFilter(currentFilter, filteredToastIds).length;
 
   return (
     <div className="pt-10 pb-14 pl-4 pr-4 flex flex-col w-screen max-w-[600px] h-dvh max-h-[900px] justify-self-center space-y-6">

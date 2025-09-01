@@ -110,6 +110,9 @@ export const useToasts = () => {
           userVote: localVote
         };
         
+        // Mark toast as seen when it's loaded
+        markToastAsSeenForFilter(currentFilter, toastWithVote.id);
+        
         setCurrentToast(toastWithVote);
       } else {
         setCurrentToast(null);
@@ -121,16 +124,11 @@ export const useToasts = () => {
     }
   }, [toasts, currentFilter, getFilteredToastIds, seenToastsResetVersion]);
 
-  // Mark current toast as seen and load next random toast
+  // Load next random toast
   const loadNextRandomToast = useCallback(async () => {
-    // Mark current toast as seen before loading next one
-    if (currentToast) {
-      markToastAsSeenForFilter(currentFilter, currentToast.id);
-    }
-    
     // Call the internal loadRandomToast logic directly
     await loadRandomToastInternal();
-  }, [currentToast, currentFilter, loadRandomToastInternal]);
+  }, [loadRandomToastInternal]);
 
   // Load random toast with unseen logic and filtering (public API)
   const loadRandomToast = useCallback(async () => {
