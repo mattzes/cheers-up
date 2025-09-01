@@ -258,13 +258,25 @@ export default function ToastApp() {
             </Button>
           </div>
 
-          <div className="flex-grow flex items-center justify-center" onClick={handleNextToast}>
+          <div
+            className={`flex-grow flex items-center justify-center ${currentToast ? 'cursor-pointer' : ''}`}
+            onClick={currentToast ? handleNextToast : undefined}>
             <Card className="shadow-lg flex items-center justify-center w-full h-full max-h-90">
               <CardContent className="flex flex-grow flex-col justify-center">
-                {loading || !currentToast ? (
+                {loading ? (
                   <div className="text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                     <p className="text-muted-foreground">Loading...</p>
+                  </div>
+                ) : !currentToast ? (
+                  <div className="text-center">
+                    {currentFilter === 'liked' ? (
+                      <p className="text-muted-foreground">Du hast noch keinen Trinkspruch geliked.</p>
+                    ) : currentFilter === 'top25' ? (
+                      <p className="text-muted-foreground">Es wurden noch keine Trinksprüche geliked.</p>
+                    ) : (
+                      <p className="text-muted-foreground">Keine Trinksprüche verfügbar.</p>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -283,7 +295,7 @@ export default function ToastApp() {
           {/* Action Buttons */}
           <div className="space-y-4">
             {/* Like/Dislike Buttons */}
-            {currentToast && (
+            {currentToast ? (
               <div className="flex gap-4 justify-center">
                 <Button variant={isLiked ? 'default' : 'outline'} size="lg" onClick={handleLike} className="flex-1 gap-2">
                   <ThumbsUp className="w-5 h-5" />
@@ -296,6 +308,12 @@ export default function ToastApp() {
                   className="flex-1 gap-2">
                   <ThumbsDown className="w-5 h-5" />
                   {currentToast.dislikes}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-4 justify-center">
+                <Button variant="outline" size="lg" onClick={handleNextToast} className="flex-1 gap-2">
+                  Erneut versuchen
                 </Button>
               </div>
             )}
