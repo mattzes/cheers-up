@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, X, Share2, Smartphone, ArrowRight } from 'lucide-react';
+import { Download, X, Share, Smartphone } from 'lucide-react';
 
 // Extend Navigator interface for iOS standalone mode
 declare global {
@@ -114,10 +114,9 @@ export default function PWAInstallOverlay() {
                       1
                     </span>
                     <span>
-                      Tippe auf das <Share2 className="w-4 h-4 inline" /> Teilen-Symbol
+                      Tippe auf das <Share className="w-4 h-4 inline" /> Teilen-Symbol
                     </span>
                   </div>
-                  <ArrowRight className="w-4 h-4 mx-auto text-primary" />
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold">
                       2
@@ -135,12 +134,12 @@ export default function PWAInstallOverlay() {
             ) : (
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Installiere Cheers Up als App auf deinem Gerät für eine bessere Erfahrung und Offline-Funktionalität.
+                  Installiere Cheers Up als App auf deinem Gerät für eine App-ähnliche Erfahrung.
                 </p>
 
                 <div className="bg-muted/50 rounded-lg p-3 mt-4">
                   <p className="text-xs text-muted-foreground">
-                    <strong>Vorteile:</strong> Schnellerer Zugriff, Offline-Nutzung und App-ähnliches Gefühl.
+                    <strong>Vorteile:</strong> Schnellerer Zugriff und App-ähnliches Gefühl.
                   </p>
                 </div>
               </div>
@@ -162,7 +161,7 @@ export default function PWAInstallOverlay() {
           )}
           {isSafari && (
             <Button onClick={handleDismiss} className="flex-1">
-              <Share2 className="w-4 h-4 mr-2" />
+              <Share className="w-4 h-4 mr-2" />
               Verstanden
             </Button>
           )}
