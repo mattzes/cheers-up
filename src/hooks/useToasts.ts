@@ -173,8 +173,10 @@ export const useToasts = () => {
         setCurrentToast(updatedToast);
       }
       
-      // Reload toasts if we're in a filter that depends on vote counts
-      if (currentFilter === 'liked' || currentFilter === 'top25') {
+      // Only reload toasts if we're in a filter that depends on vote counts
+      // AND the current toast is not the one being voted on
+      if ((currentFilter === 'liked' || currentFilter === 'top25') && 
+          (!currentToast || currentToast.id !== toastId)) {
         // Use setTimeout to avoid blocking the UI update
         setTimeout(() => {
           setLocalVotesVersion(prev => prev + 1);
@@ -185,7 +187,7 @@ export const useToasts = () => {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update vote');
     }
-  }, [currentToast]);
+  }, [currentToast, currentFilter]);
 
   // Create new toast
   const addToast = useCallback(async (text: string, createdBy?: string) => {
@@ -226,9 +228,10 @@ export const useToasts = () => {
   useEffect(() => {
     if (toasts.length > 0 && currentFilter !== 'all') {
       // Only reload when filter changes to non-default filters
+      // Don't reload when only localVotesVersion changes (which happens on votes)
       loadRandomToastInternal();
     }
-  }, [currentFilter, localVotesVersion, seenToastsResetVersion, loadRandomToastInternal]);
+  }, [currentFilter, seenToastsResetVersion, loadRandomToastInternal]);
 
   return {
     toasts,
