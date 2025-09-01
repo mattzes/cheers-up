@@ -35,6 +35,8 @@ export default function ToastApp() {
     currentFilter,
     loadRandomToast,
     loadNextRandomToast,
+    loadPreviousToast,
+    canGoBack,
     handleVote,
     addToast,
     changeFilter,
@@ -259,9 +261,20 @@ export default function ToastApp() {
             </Button>
           </div>
 
-          <div
-            className={`flex-grow flex items-center justify-center ${currentToast ? 'cursor-pointer' : ''}`}
-            onClick={currentToast ? handleNextToast : undefined}>
+          <div className="flex-grow flex items-center justify-center relative">
+            {/* Left half - Previous toast */}
+            <div
+              className={`absolute left-0 top-0 w-1/2 h-full`}
+              onClick={currentToast && canGoBack ? loadPreviousToast : undefined}
+              title={canGoBack ? 'Click to go back' : ''}
+            />
+
+            {/* Right half - Next toast */}
+            <div
+              className={`absolute right-0 top-0 w-1/2 h-full`}
+              onClick={currentToast ? handleNextToast : undefined}
+              title="Click for next toast"
+            />
             <Card className="shadow-lg flex items-center justify-center w-full h-full max-h-90">
               <CardContent className="flex flex-grow flex-col justify-center">
                 {loading ? (

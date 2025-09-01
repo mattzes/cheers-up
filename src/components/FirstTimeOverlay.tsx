@@ -49,10 +49,27 @@ export default function FirstTimeOverlay() {
               Tippe auf die <strong>Toast-Karte</strong> in der Mitte, um den nächsten Trinkspruch zu sehen.
             </p>
 
-            <div className="bg-muted/50 rounded-lg p-3 mt-4">
-              <p className="text-xs text-muted-foreground">
-                <strong>Tipp:</strong> Du kannst auch die Like/Dislike Buttons verwenden, um deine Favoriten zu markieren.
-              </p>
+            {/* Miniature card with tapping fingers */}
+            <div className="relative mb-3">
+              {/* Miniature card */}
+              <div className="w-56 h-48 mx-auto bg-card border border-border rounded-lg shadow-sm flex items-center justify-center relative">
+                <div className="text-xs text-muted-foreground text-center px-2">Trinkspruch</div>
+
+                {/* Vertical divider line */}
+                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border"></div>
+
+                {/* Left tapping finger */}
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-2xl">👆</div>
+
+                {/* Left label under finger */}
+                <div className="absolute left-2 top-3/4 text-[10px] text-muted-foreground text-center">Vorheriger</div>
+
+                {/* Right tapping finger */}
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-2xl">👆</div>
+
+                {/* Right label under finger */}
+                <div className="absolute right-2 top-3/4 text-[10px] text-muted-foreground text-center">Nächster</div>
+              </div>
             </div>
           </div>
         </div>
