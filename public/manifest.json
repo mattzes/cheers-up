@@ -1,6 +1,6 @@
 {
-    "name": "'Cheers' Up",
-    "short_name": "'Cheers' Up",
+    "name": "Cheers Up",
+    "short_name": "Cheers Up",
     "description": "Jederzeit einen neuen Trinkspruch",
     "start_url": "/",
     "display": "standalone",
