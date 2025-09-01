@@ -6,7 +6,6 @@ import {
   addDoc, 
   updateDoc, 
   query, 
-  orderBy, 
   increment,
   serverTimestamp,
   where,

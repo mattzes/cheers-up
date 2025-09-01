@@ -4,9 +4,22 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, X, Share2, Smartphone, ArrowRight } from 'lucide-react';
 
+// Extend Navigator interface for iOS standalone mode
+declare global {
+  interface Navigator {
+    standalone?: boolean;
+  }
+}
+
+// Interface for beforeinstallprompt event
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<{ outcome: string }>;
+  userChoice: Promise<{ outcome: string }>;
+}
+
 export default function PWAInstallOverlay() {
   const [showOverlay, setShowOverlay] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isSafari, setIsSafari] = useState(false);
 
   useEffect(() => {
@@ -21,8 +34,7 @@ export default function PWAInstallOverlay() {
     setIsSafari(detectSafari());
 
     // Check if the app is already installed
-    const isInstalled =
-      window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
     if (!isInstalled) {
       // Show overlay after a short delay to let the page load
@@ -38,7 +50,7 @@ export default function PWAInstallOverlay() {
     // Listen for the beforeinstallprompt event to capture the prompt (Chrome only)
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -110,7 +122,7 @@ export default function PWAInstallOverlay() {
                     <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold">
                       2
                     </span>
-                    <span>Wähle "Zum Startbildschirm hinzufügen"</span>
+                    <span>Wähle &quot;Zum Startbildschirm hinzufügen&quot;</span>
                   </div>
                 </div>
 
