@@ -9,6 +9,7 @@ import {
   orderBy, 
   increment,
   serverTimestamp,
+  where,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { Toast, CreateToastData, UpdateToastVoteData } from './types';
@@ -18,7 +19,12 @@ const TOASTS_COLLECTION = 'toasts';
 // Get all toasts
 export const getAllToasts = async (): Promise<Toast[]> => {
   try {
-    const q = query(collection(db, TOASTS_COLLECTION), orderBy('createdAt', 'desc'));
+    // Only fetch toasts created by "system" for now
+    // Note: This query requires a Firestore composite index on (createdBy, createdAt)
+    const q = query(
+      collection(db, TOASTS_COLLECTION), 
+      where('createdBy', '==', 'system')
+    );
     const querySnapshot = await getDocs(q);
     
     return querySnapshot.docs.map(doc => ({
