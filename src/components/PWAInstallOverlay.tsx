@@ -121,7 +121,7 @@ export default function PWAInstallOverlay() {
                     <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold">
                       2
                     </span>
-                    <span>Wähle &quot;Zum Startbildschirm hinzufügen&quot;</span>
+                    <span>Wähle &quot;Zum Home-Bildschirm hinzufügen&quot;</span>
                   </div>
                 </div>
 
@@ -149,20 +149,21 @@ export default function PWAInstallOverlay() {
 
         {/* Action buttons */}
         <div className="mt-6 flex gap-3">
-          <Button onClick={handleDismiss} variant="outline" className="flex-1">
-            <X className="w-4 h-4 mr-2" />
-            Abbrechen
-          </Button>
-          {!isSafari && (
-            <Button onClick={handleInstall} className="flex-1">
-              <Download className="w-4 h-4 mr-2" />
-              Installieren
-            </Button>
-          )}
-          {isSafari && (
-            <Button onClick={handleDismiss} className="flex-1">
-              <Share className="w-4 h-4 mr-2" />
-              Verstanden
+          {!isSafari ? (
+            <>
+              <Button onClick={handleDismiss} variant="outline" className="flex-1">
+                <X className="w-4 h-4 mr-2" />
+                Abbrechen
+              </Button>
+              <Button onClick={handleInstall} className="flex-1">
+                <Download className="w-4 h-4 mr-2" />
+                Installieren
+              </Button>
+            </>
+          ) : (
+            <Button onClick={handleDismiss} variant="outline" className="w-full">
+              <X className="w-4 h-4 mr-2" />
+              Abbrechen
             </Button>
           )}
         </div>
