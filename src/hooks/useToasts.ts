@@ -27,10 +27,7 @@ export const useToasts = () => {
   const [localVotesVersion, setLocalVotesVersion] = useState(0);
   const [seenToastsResetVersion, setSeenToastsResetVersion] = useState(0);
   const isLoadingRandomToastRef = useRef(false);
-  
-  // Add toast history for backward navigation
   const [toastHistory, setToastHistory] = useState<ToastWithUserVote[]>([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
 
   // Load all toasts
   const loadToasts = useCallback(async () => {
@@ -126,17 +123,9 @@ export const useToasts = () => {
         markToastAsSeenForFilter(currentFilter, toastWithVote.id);
         
         // Add to history for backward navigation
-        setToastHistory(prev => {
-          const newHistory = [...prev];
-          // Remove any toasts after current index if we're going back and then forward
-          if (historyIndex < prev.length - 1) {
-            newHistory.splice(historyIndex + 1);
-          }
-          newHistory.push(toastWithVote);
-          return newHistory;
-        });
-        setHistoryIndex(prev => prev + 1);
-        
+        setToastHistory(prev => [...prev, toastWithVote]);
+        console.log('toastHistory', toastHistory);
+
         setCurrentToast(toastWithVote);
       } else {
         setCurrentToast(null);
@@ -157,15 +146,16 @@ export const useToasts = () => {
 
   // Load previous toast from history
   const loadPreviousToast = useCallback(async () => {
-    if (historyIndex > 0) {
-      const newIndex = historyIndex - 1;
-      setHistoryIndex(newIndex);
-      setCurrentToast(toastHistory[newIndex]);
+    console.log('toastHistory from loadPreviousToast', toastHistory);
+    if (toastHistory.length > 1) {
+      setToastHistory(prevHistory => {
+        const newHistory = prevHistory.slice(0, -1);
+        const previousToast = newHistory[newHistory.length - 1] ?? null;
+        setCurrentToast(previousToast);
+        return newHistory;
+      });
     }
-  }, [historyIndex, toastHistory]);
-
-  // Check if we can go back
-  const canGoBack = historyIndex > 0;
+  }, [toastHistory]);
 
   // Load random toast with unseen logic and filtering (public API)
   const loadRandomToast = useCallback(async () => {
@@ -236,7 +226,6 @@ export const useToasts = () => {
     
     // Reset history when changing filters
     setToastHistory([]);
-    setHistoryIndex(-1);
     
     // If switching to liked or top25 filter, reload toasts to get fresh data
     if (newFilter === 'liked' || newFilter === 'top25') {
@@ -271,11 +260,11 @@ export const useToasts = () => {
     loading,
     error,
     currentFilter,
+    toastHistory,
     loadToasts,
     loadRandomToast,
     loadNextRandomToast,
     loadPreviousToast,
-    canGoBack,
     handleVote,
     addToast,
     changeFilter,

@@ -33,10 +33,10 @@ export default function ToastApp() {
     loading,
     error,
     currentFilter,
+    toastHistory,
     loadRandomToast,
     loadNextRandomToast,
     loadPreviousToast,
-    canGoBack,
     handleVote,
     addToast,
     changeFilter,
@@ -265,8 +265,8 @@ export default function ToastApp() {
             {/* Left half - Previous toast */}
             <div
               className={`absolute left-0 top-0 w-1/2 h-full`}
-              onClick={currentToast && canGoBack ? loadPreviousToast : undefined}
-              title={canGoBack ? 'Click to go back' : ''}
+              onClick={currentToast && toastHistory.length > 1 ? loadPreviousToast : undefined}
+              title={toastHistory.length > 1 ? 'Click to go back' : ''}
             />
 
             {/* Right half - Next toast */}
