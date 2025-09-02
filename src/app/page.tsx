@@ -187,7 +187,7 @@ export default function ToastApp() {
                 <div className="text-center p-8">
                   <div className="text-6xl mb-4">✅</div>
                   <h3 className="text-xl font-semibold text-green-600 dark:text-green-400 mb-2">Erfolgreich!</h3>
-                  <p className="text-muted-foreground">Trinkspruch hinzugefügt</p>
+                  <p className="text-muted-foreground">Dein Trinkspruch wird nun geprüft und wird dann freigeschaltet.</p>
                 </div>
               ) : (
                 <>

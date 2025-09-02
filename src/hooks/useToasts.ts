@@ -212,7 +212,7 @@ export const useToasts = () => {
     try {
       setError(null);
       const newToast = await createToast({ text, createdBy });
-      setToasts(prev => [newToast, ...prev]);
+      // setToasts(prev => [newToast, ...prev]);
       return newToast;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create toast');
