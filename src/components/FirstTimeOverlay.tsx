@@ -46,7 +46,7 @@ export default function FirstTimeOverlay() {
             <h3 className="text-lg font-semibold text-foreground">Willkommen bei Cheers Up! 🍻</h3>
 
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Tippe auf die <strong>Toast-Karte</strong> in der Mitte, um den nächsten Trinkspruch zu sehen.
+              Tippe auf die <strong>Trinkspruch-Karte</strong> in der Mitte, um den nächsten Trinkspruch zu sehen.
             </p>
 
             {/* Miniature card with tapping fingers */}
