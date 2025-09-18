@@ -38,12 +38,8 @@ export default function FirstTimeOverlay() {
       <div className="relative mx-4 max-w-sm rounded-lg bg-background/95 p-6 shadow-lg border border-border">
         {/* Content */}
         <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <Pointer className="w-12 h-12 text-primary animate-bounce" />
-          </div>
-
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-foreground">Willkommen bei Cheers Up! 🍻</h3>
+            <h3 className="text-lg mb-8 mt-4 font-semibold text-foreground">Willkommen bei Cheers Up! 🍻</h3>
 
             <p className="text-sm text-muted-foreground leading-relaxed">
               Tippe auf die <strong>Trinkspruch-Karte</strong> in der Mitte, um den nächsten Trinkspruch zu sehen.
@@ -53,22 +49,12 @@ export default function FirstTimeOverlay() {
             <div className="relative mb-3">
               {/* Miniature card */}
               <div className="w-56 h-48 mx-auto bg-card border border-border rounded-lg shadow-sm flex items-center justify-center relative">
-                <div className="text-xs text-muted-foreground text-center px-2">Trinkspruch</div>
+                <div className="text-xs mt-8text-muted-foreground text-center px-2">Trinkspruch</div>
 
-                {/* Vertical divider line */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border"></div>
-
-                {/* Left tapping finger */}
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-2xl">👆</div>
-
-                {/* Left label under finger */}
-                <div className="absolute left-2 top-3/4 text-[10px] text-muted-foreground text-center">Vorheriger</div>
-
-                {/* Right tapping finger */}
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-2xl">👆</div>
-
-                {/* Right label under finger */}
-                <div className="absolute right-2 top-3/4 text-[10px] text-muted-foreground text-center">Nächster</div>
+                {/* Finger above center to keep text readable */}
+                <div className="absolute left-1/2 top-[35%] transform -translate-x-1/2 -translate-y-1/2">
+                  <Pointer className="w-8 h-8 text-primary animate-bounce" />
+                </div>
               </div>
             </div>
           </div>
