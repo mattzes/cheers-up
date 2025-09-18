@@ -262,20 +262,12 @@ export default function ToastApp() {
           </div>
 
           <div className="flex-grow flex items-center justify-center relative">
-            {/* Left half - Previous toast */}
-            <div
-              className={`absolute left-0 top-0 w-1/2 h-full`}
-              onClick={currentToast && toastHistory.length > 1 ? loadPreviousToast : undefined}
-              title={toastHistory.length > 1 ? 'Click to go back' : ''}
-            />
-
-            {/* Right half - Next toast */}
-            <div
-              className={`absolute right-0 top-0 w-1/2 h-full`}
+            <Card
               onClick={currentToast ? handleNextToast : undefined}
-              title="Click for next toast"
-            />
-            <Card className="shadow-lg flex items-center justify-center w-full h-full max-h-90">
+              className={`shadow-lg flex items-center justify-center w-full h-full max-h-90 ${
+                currentToast ? 'cursor-pointer' : ''
+              }`}
+              title={currentToast ? 'Für nächsten Trinkspruch tippen' : undefined}>
               <CardContent className="flex flex-grow flex-col justify-center">
                 {loading ? (
                   <div className="text-center">
@@ -304,6 +296,18 @@ export default function ToastApp() {
                 </div>
               )}
             </Card>
+          </div>
+
+          {/* Previous Button */}
+          <div className="mt-2">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={loadPreviousToast}
+              disabled={toastHistory.length <= 1}
+              className="w-full">
+              Vorheriger Trinkspruch
+            </Button>
           </div>
 
           {/* Action Buttons */}
